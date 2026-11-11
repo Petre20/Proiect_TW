@@ -378,7 +378,95 @@ Statisticile vor fi calculate folosind datele existente, fără tabele supliment
 | Progresul obiectivelor | `goals` + `activities` sau `habit_completions` |
 | Calendarul activităților | Activități grupate după dată |
 
-## 2.7. Aspecte de clarificat
+## 2.7. Principalele endpoint-uri propuse
+
+Backend-ul FastAPI va expune un API REST cu prefixul `/api`. Rutele din tabelele de mai jos sunt relative la acest prefix. Datele vor fi transmise în format JSON, cu excepția fișierelor CSV.
+
+**Reguli de acces:**
+
+- **Public:** nu necesită autentificare.
+- **Utilizator autentificat:** necesită o sesiune validă și un cont activ, cu emailul verificat. Accesul este limitat la datele proprii.
+- **Administrator:** necesită o sesiune validă și rolul `admin`, pe lângă condițiile unui cont activ și verificat.
+- Pentru resursele personale, backend-ul determină utilizatorul din sesiune și verifică apartenența resurselor indicate prin ID. Rolul de administrator nu acordă implicit acces la activitățile, obiceiurile sau obiectivele altor utilizatori.
+
+### 2.7.1. Autentificare și cont
+
+| Metodă | Endpoint | Descriere | Acces |
+|---|---|---|---|
+| `POST` | `/auth/register` | Creează un cont cu rolul `user` și inițiază trimiterea emailului de verificare. | Public |
+| `POST` | `/auth/verify-email` | Primește tokenul din linkul de verificare, validează hash-ul și expirarea acestuia și marchează emailul ca verificat. | Public |
+| `POST` | `/auth/resend-verification` | Primește adresa de email și solicită trimiterea unui token nou de verificare, invalidându-l pe cel anterior. | Public |
+| `POST` | `/auth/login` | Verifică emailul, parola și starea contului, creează sesiunea și setează cookie-ul `HttpOnly`. | Public |
+| `POST` | `/auth/logout` | Invalidează sesiunea curentă și elimină cookie-ul de autentificare. | Utilizator autentificat |
+| `GET` | `/auth/me` | Returnează datele contului autentificat, inclusiv rolul, fără parola hash-uită sau tokenuri. | Utilizator autentificat |
+
+### 2.7.2. Tipuri de activități și activități efectuate
+
+| Metodă | Endpoint | Descriere | Acces |
+|---|---|---|---|
+| `GET` | `/activity-types` | Listează tipurile de activități definite de utilizator. | Utilizator autentificat |
+| `POST` | `/activity-types` | Creează un tip de activitate, cu denumire unică pentru utilizatorul curent. | Utilizator autentificat |
+| `PATCH` | `/activity-types/{id}` | Modifică denumirea unui tip de activitate propriu. | Utilizator autentificat |
+| `DELETE` | `/activity-types/{id}` | Solicită ștergerea unui tip de activitate, conform regulilor privind înregistrările și obiectivele asociate. | Utilizator autentificat |
+| `GET` | `/activities` | Listează activitățile proprii, cu paginare și filtre opționale după intervalul de date și tipul activității. | Utilizator autentificat |
+| `POST` | `/activities` | Înregistrează o activitate, validând tipul asociat, data, durata, distanța și intensitatea. | Utilizator autentificat |
+| `GET` | `/activities/{id}` | Returnează detaliile unei activități proprii. | Utilizator autentificat |
+| `PATCH` | `/activities/{id}` | Modifică datele unei activități proprii. | Utilizator autentificat |
+| `DELETE` | `/activities/{id}` | Șterge o activitate proprie; progresul și statisticile vor reflecta datele rămase. | Utilizator autentificat |
+
+### 2.7.3. Obiceiuri și realizarea acestora
+
+| Metodă | Endpoint | Descriere | Acces |
+|---|---|---|---|
+| `GET` | `/habits` | Listează obiceiurile proprii și programarea lor, cu posibilitatea filtrării după starea de arhivare. | Utilizator autentificat |
+| `POST` | `/habits` | Creează un obicei și programarea acestuia; pentru `selected_days` primește cel puțin o zi a săptămânii. | Utilizator autentificat |
+| `GET` | `/habits/{id}` | Returnează detaliile unui obicei propriu și zilele programate. | Utilizator autentificat |
+| `PATCH` | `/habits/{id}` | Actualizează un obicei propriu, inclusiv starea `is_archived`; arhivarea păstrează istoricul realizărilor. | Utilizator autentificat |
+| `GET` | `/habits/{id}/completions` | Listează realizările unui obicei propriu pentru un interval de date. | Utilizator autentificat |
+| `PUT` | `/habits/{id}/completions/{date}` | Marchează obiceiul ca realizat în ziua indicată. Repetarea cererii nu creează înregistrări duplicate. | Utilizator autentificat |
+| `DELETE` | `/habits/{id}/completions/{date}` | Elimină bifarea realizării obiceiului pentru ziua indicată. | Utilizator autentificat |
+
+Parametrul `{date}` va utiliza formatul `YYYY-MM-DD`. Crearea obiceiului și salvarea zilelor programate se vor realiza în aceeași tranzacție.
+
+### 2.7.4. Obiective și progres
+
+| Metodă | Endpoint | Descriere | Acces |
+|---|---|---|---|
+| `GET` | `/goals` | Listează obiectivele proprii, cu posibilitatea filtrării după starea activă. | Utilizator autentificat |
+| `POST` | `/goals` | Creează un obiectiv, validând ținta, unitatea, perioada și apartenența activității sau obiceiului asociat. | Utilizator autentificat |
+| `GET` | `/goals/{id}` | Returnează configurația unui obiectiv propriu. | Utilizator autentificat |
+| `PATCH` | `/goals/{id}` | Modifică un obiectiv propriu sau îl dezactivează prin `is_active`. | Utilizator autentificat |
+| `DELETE` | `/goals/{id}` | Șterge un obiectiv propriu, fără a șterge activitățile sau realizările obiceiului urmărit. | Utilizator autentificat |
+| `GET` | `/goals/{id}/progress` | Returnează intervalul evaluat, valoarea realizată, valoarea țintă și procentul de progres, calculate din activități sau realizările obiceiului. | Utilizator autentificat |
+
+### 2.7.5. Dashboard și statistici
+
+| Metodă | Endpoint | Descriere | Acces |
+|---|---|---|---|
+| `GET` | `/dashboard` | Returnează un rezumat cu activitățile recente, obiceiurile programate pentru ziua curentă și progresul obiectivelor active. | Utilizator autentificat |
+| `GET` | `/statistics` | Returnează numărul de activități, minutele active, distanța totală și numărul de realizări ale obiceiurilor, cu agregări pentru grafice. | Utilizator autentificat |
+
+Pentru statistici, parametrii propuși sunt `start_date`, `end_date`, `group_by` (`day`, `week`, `month`) și, opțional, `activity_type_id` pentru filtrarea indicatorilor de activitate.
+
+### 2.7.6. Import și export CSV
+
+| Metodă | Endpoint | Descriere | Acces |
+|---|---|---|---|
+| `POST` | `/activities/import` | Primește un fișier CSV prin `multipart/form-data`, validează rândurile și importă activități în contul curent. Returnează un rezultat al importului și eventualele erori de validare. | Utilizator autentificat |
+| `GET` | `/activities/export` | Returnează un fișier `text/csv` cu activitățile proprii, filtrate opțional după intervalul de date și tipul activității. | Utilizator autentificat |
+
+Structura fișierului CSV și regulile pentru importuri parțiale sau duplicate vor fi stabilite înaintea implementării.
+
+### 2.7.7. Administrarea conturilor
+
+| Metodă | Endpoint | Descriere | Acces |
+|---|---|---|---|
+| `GET` | `/admin/users` | Listează conturile cu paginare și filtre după starea activă sau verificarea emailului, fără hash-uri de parole ori tokenuri. | Administrator |
+| `PATCH` | `/admin/users/{id}` | Activează sau dezactivează un cont prin modificarea câmpului `is_active`. Un cont dezactivat nu mai poate accesa resursele protejate. | Administrator |
+
+Endpoint-urile reprezintă o propunere preliminară. Regulile încă deschise privind ștergerile, perioadele obiectivelor și modificarea obiceiurilor vor fi clarificate înaintea implementării.
+
+## 2.8. Aspecte de clarificat
 
 Înainte de implementarea efectivă în PostgreSQL, trebuie stabilite următoarele:
 
