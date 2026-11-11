@@ -73,7 +73,7 @@ Comunicarea dintre frontend și backend se realizează prin cereri HTTP, folosin
 ## 6. Echipa proiectului
 
 
-### Student 1 – [Hotea Emanuel]
+### Student 1 – Hotea Emanuel
 
 **Responsabilități:**
 - Dezvoltarea frontend-ului folosind React.
@@ -81,7 +81,7 @@ Comunicarea dintre frontend și backend se realizează prin cereri HTTP, folosin
 - Integrarea frontend-ului cu API-ul REST.
 - Participarea la testare și documentație.
 
-### Student 2 – [Lupu Eugen]
+### Student 2 – Lupu Eugen
 
 **Responsabilități:**
 - Dezvoltarea backend-ului folosind FastAPI.
