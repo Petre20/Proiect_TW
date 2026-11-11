@@ -24,6 +24,8 @@ Pagina de intrare în aplicație. În stânga sunt câteva idei despre aplicați
 - Dacă datele sunt greșite, apare mesajul „Email or password is incorrect”.
 - Link către crearea unui cont nou: *New to WellTrack? Create an account*.
 
+![Ecranul Login](img/01-login.png)
+
 ### 02 – Dashboard
 Prima pagină după autentificare. Arată pe scurt cum merge săptămâna.
 - Salut și buton mare *Log activity*.
@@ -45,11 +47,15 @@ Lista tuturor activităților înregistrate (sport, plimbări etc.).
 - Butoane: *Log activity* și *Import / Export*.
 - Formularul **Edit activity** (fereastră deschisă peste listă): tip, dată, ora de start, durată, distanță (opțional), intensitate (*Light / Moderate / Hard*) și notițe. Se poate salva, anula sau șterge activitatea.
 
+![Ecranul Activities](img/03-activities.png)
+
 ### 04 – Habits
 Obiceiurile zilnice sau săptămânale (de exemplu „Drink 8 glasses of water”).
 - Tabel cu zilele săptămânii (L–D), unde utilizatorul bifează ce a făcut, și un total (de exemplu 6/7).
 - Butoane: *New habit* și *Show archived*.
 - Formularul **Edit habit**: nume, frecvență (zilnic sau anumite zile). Un obicei poate fi arhivat.
+
+![Ecranul Habits](img/04-habits.png)
 
 ### 05 – Goals
 Obiectivele personale, cu progresul lor.
@@ -57,6 +63,8 @@ Obiectivele personale, cu progresul lor.
 - Fiecare obiectiv are o bară de progres (de exemplu „Run 30 km in November – 15.1 of 30 km”).
 - Când un obiectiv este atins, apare un mesaj de felicitare.
 - Formularul **New goal**: nume, tipul de activitate numărată, țintă și unitate (de exemplu 100 km), perioadă (*Weekly / Monthly / Custom dates*) și data de start.
+
+![Ecranul Goals](img/05-goals.png)
 
 ### 06 – Statistics
 Grafice despre evoluția utilizatorului.
@@ -85,6 +93,8 @@ Pagina unui articol.
 - Notă că este informație generală, nu sfat medical.
 - *Related reads*: articole asemănătoare.
 
+![Ecranul Article](img/08-article.png)
+
 ### 09 – Import / Export
 Mutarea datelor despre activități în și din aplicație, în format CSV.
 - **Export:** se alege perioada și se descarcă fișierul CSV.
@@ -93,11 +103,15 @@ Mutarea datelor despre activități în și din aplicație, în format CSV.
 - Tabelul de erori arată rândul, coloana, valoarea și problema (de exemplu „Unknown type. Did you mean Swimming?”).
 - Se poate descărca un raport de erori și se pot importa doar rândurile valide (*Import 39 rows*).
 
+![Ecranul Import / Export](img/09-import-export.png)
+
 ### 10 – Profile & settings
 Gestionarea contului.
 - **Account:** nume, email, prima zi a săptămânii (luni sau duminică).
 - **Password:** schimbarea parolei (parola curentă, parola nouă de cel puțin 8 caractere, confirmare).
 - **Your data:** *Export my data* și *Delete account*.
+
+![Ecranul Profile & settings](img/10-profile.png)
 
 ### 11 – Admin: Users
 Pagina administratorului pentru conturi.
@@ -106,12 +120,16 @@ Pagina administratorului pentru conturi.
 - Căutare după nume sau email și filtre după rol și status.
 - Buton *Export users CSV*.
 
+![Ecranul Admin: Users](img/11-admin-users.png)
+
 ### 12 – Admin: Articles
 Gestionarea articolelor din secțiunea *Learn*.
 - Cifre generale: articole totale, publicate, ciorne.
 - Tabel cu titlu, temă, status (*Published / Draft*), data actualizării și numărul de citiri.
 - Buton *New article*, căutare și filtre.
 - Formularul **Edit article**: titlu, temă, timp de citire, rezumat, textul în Markdown și statusul. Articolul poate fi salvat sau șters.
+
+![Ecranul Admin: Articles](img/12-admin-articles.png)
 
 ---
 
