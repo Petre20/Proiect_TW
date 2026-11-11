@@ -5,9 +5,9 @@
 
 Baza de date a aplicației **WellTrack** va fi implementată folosind **PostgreSQL**.
 
-Modelul preliminar conține 8 tabele:
+Modelul preliminar conține 9 tabele:
 
-- `users` – conturile utilizatorilor și verificarea emailului.
+- `users` – conturile utilizatorilor, verificarea emailului și interesele pentru recomandarea articolelor.
 - `sessions` – sesiunile de autentificare.
 - `activity_types` – tipurile de activități definite de utilizatori.
 - `activities` – istoricul activităților efectuate.
@@ -15,6 +15,7 @@ Modelul preliminar conține 8 tabele:
 - `habit_schedule` – zilele programate pentru obiceiuri.
 - `habit_completions` – istoricul realizării obiceiurilor.
 - `goals` – obiectivele personale.
+- `articles` – catalogul comun de articole educaționale.
 
 **Observație:** Activities și Habits sunt independente. Un utilizator poate înregistra activități fără să bifeze obiceiuri și invers.
 
@@ -22,7 +23,7 @@ Modelul preliminar conține 8 tabele:
 
 ### Tabelul `users`
 
-Stochează informațiile necesare autentificării, verificării emailului și administrării conturilor.
+Stochează informațiile necesare autentificării, verificării emailului, administrării conturilor și recomandării articolelor după interesele selectate.
 
 | Câmp | Tip PostgreSQL | Descriere |
 |---|---|---|
@@ -35,6 +36,7 @@ Stochează informațiile necesare autentificării, verificării emailului și ad
 | `email_verified` | BOOLEAN | Indică dacă emailul a fost verificat |
 | `email_verification_token_hash` | TEXT, NULL | Hash-ul tokenului de verificare |
 | `email_verification_expires_at` | TIMESTAMPTZ, NULL | Momentul expirării tokenului |
+| `interests` | TEXT[] | Lista temelor de interes selectate, de exemplu `running`, `habits` sau `recovery` |
 | `created_at` | TIMESTAMPTZ | Momentul creării contului |
 
 **Constrângeri:**
@@ -46,6 +48,8 @@ Stochează informațiile necesare autentificării, verificării emailului și ad
 - Autentificarea este permisă numai după verificarea emailului.
 - Câmpurile tokenului și expirării sunt fie ambele completate, fie ambele `NULL`.
 - Un utilizator poate avea un singur token de verificare valid la un moment dat.
+- `interests` este obligatoriu și are implicit valoarea unui tablou gol (`{}`).
+- Interesele nu pot conține valori `NULL`, goale sau duplicate. Backend-ul validează valorile folosind același vocabular de teme ca pentru `articles.topic`.
 
 **Observații:**
 - Parolele sunt stocate exclusiv sub formă de hash.
@@ -220,6 +224,51 @@ Stochează obiectivele personale ale utilizatorilor.
 
 **Observație:** Progresul obiectivelor nu este stocat separat, ci calculat din `activities` sau `habit_completions`.
 
+### Tabelul `articles`
+
+Stochează articolele educaționale disponibile în secțiunea Learn. Catalogul este comun tuturor utilizatorilor; fiecare articol este stocat o singură dată.
+
+| Câmp | Tip PostgreSQL | Descriere |
+|---|---|---|
+| `id` | BIGINT (PK) | Identificator unic |
+| `title` | VARCHAR(255) | Titlul articolului |
+| `summary` | TEXT | Rezumatul afișat în lista articolelor |
+| `content` | TEXT, NULL | Conținutul articolului în format Markdown, atunci când este disponibil pentru afișare în aplicație |
+| `topic` | VARCHAR(50) | Tema principală, de exemplu `running`, `habits` sau `recovery` |
+| `image_url` | TEXT, NULL | Adresa imaginii de prezentare |
+| `source_name` | VARCHAR(150), NULL | Denumirea sursei pentru un articol extern |
+| `source_url` | TEXT, NULL | Linkul către articolul original, dacă există |
+| `published_at` | TIMESTAMPTZ | Momentul publicării articolului |
+| `created_at` | TIMESTAMPTZ | Momentul adăugării în catalog |
+| `updated_at` | TIMESTAMPTZ | Momentul ultimei actualizări a înregistrării |
+
+**Constrângeri:**
+
+- `title`, `summary` și `topic` sunt obligatorii și nu pot fi șiruri goale sau formate doar din spații.
+- Articolul trebuie să aibă fie un `content` nevid, fie un `source_url` nevid, fie ambele.
+- `updated_at` trebuie să fie mai mare sau egal cu `created_at`.
+- Fiecare articol are o singură temă principală, păstrată direct în câmpul `topic`.
+
+**Observații:**
+
+- Articolele pot fi proprii sau preluate din surse care permit utilizarea conținutului. Alegerea și integrarea unui API extern vor fi stabilite ulterior.
+- Dacă este disponibil doar rezumatul și linkul original, utilizatorul va putea deschide articolul la sursă. Lectura integrală în aplicație necesită completarea câmpului `content`.
+- Cuprinsul și timpul estimat de lectură pot fi calculate din conținut, fără câmpuri suplimentare.
+- Recomandarea articolelor se bazează pe potrivirea dintre `topic` și lista `users.interests`.
+
+### Recomandarea articolelor după interese
+
+Interesele sunt selectate explicit de utilizator și pot fi actualizate ulterior. Pentru această versiune, lista este păstrată direct în `users.interests`, fără un tabel suplimentar.
+
+**Comportament propus:**
+
+1. Backend-ul identifică utilizatorul din sesiune și citește interesele selectate.
+2. Selectează articolele a căror temă principală apare în `users.interests` și le ordonează după `published_at` descrescător, apoi după `id` descrescător.
+3. Dacă utilizatorul nu a selectat interese sau nu există articole potrivite, afișează cele mai recente articole din catalog ca selecție generală.
+4. Modificarea intereselor este reflectată la următoarea solicitare a recomandărilor.
+
+De exemplu, pentru interesele `running` și `recovery`, sunt recomandate articolele cu una dintre aceste teme. Recomandările sunt calculate la cerere; nu se stochează o relație individuală între utilizator și articol.
+
 ## 2.3. Relațiile dintre tabele
 
 | Relație | Cardinalitate | Descriere |
@@ -234,6 +283,8 @@ Stochează obiectivele personale ale utilizatorilor.
 | `users` → `goals` | 1:N | Un utilizator poate avea mai multe obiective |
 | `activity_types` → `goals` | 1:N (opțional) | Un tip poate fi urmărit de mai multe obiective |
 | `habits` → `goals` | 1:N (opțional) | Un obicei poate fi urmărit de mai multe obiective |
+
+Tabelul `articles` reprezintă un catalog comun și nu are o cheie externă către `users`. Potrivirea temelor cu interesele utilizatorului este realizată de backend la calcularea recomandărilor.
 
 ## 2.4. Diagrama ERD
 
@@ -262,6 +313,7 @@ erDiagram
         boolean email_verified
         text email_verification_token_hash
         timestamptz email_verification_expires_at
+        text[] interests
         timestamptz created_at
     }
 
@@ -329,6 +381,21 @@ erDiagram
         boolean is_active
         timestamptz created_at
     }
+
+    articles {
+        bigint id PK
+        varchar title
+        text summary
+        text content
+        varchar topic
+        text image_url
+        varchar source_name
+        text source_url
+        timestamptz published_at
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
 ```
 
 ## 2.5. Autentificarea și verificarea emailului
@@ -464,6 +531,17 @@ Structura fișierului CSV și regulile pentru importuri parțiale sau duplicate 
 | `GET` | `/admin/users` | Listează conturile cu paginare și filtre după starea activă sau verificarea emailului, fără hash-uri de parole ori tokenuri. | Administrator |
 | `PATCH` | `/admin/users/{id}` | Activează sau dezactivează un cont prin modificarea câmpului `is_active`. Un cont dezactivat nu mai poate accesa resursele protejate. | Administrator |
 
+### 2.7.8. Articole și interese
+
+| Metodă | Endpoint | Descriere | Acces |
+|---|---|---|---|
+| `PATCH` | `/auth/me/interests` | Înlocuiește lista de interese a utilizatorului curent cu temele validate din cerere. O listă goală elimină preferințele selectate. | Utilizator autentificat |
+| `GET` | `/articles` | Listează catalogul de articole cu paginare și un filtru opțional după `topic`. | Utilizator autentificat |
+| `GET` | `/articles/recommended` | Returnează cu paginare articolele potrivite intereselor utilizatorului sau selecția generală, indicând dacă rezultatele sunt personalizate. | Utilizator autentificat |
+| `GET` | `/articles/{id}` | Returnează detaliile unui articol din catalogul comun, inclusiv conținutul disponibil și linkul sursei. | Utilizator autentificat |
+
+Catalogul de articole este comun utilizatorilor autentificați; restricția privind accesul exclusiv la datele proprii se aplică listei personale de interese.
+
 Endpoint-urile reprezintă o propunere preliminară. Regulile încă deschise privind ștergerile, perioadele obiectivelor și modificarea obiceiurilor vor fi clarificate înaintea implementării.
 
 ## 2.8. Aspecte de clarificat
@@ -479,4 +557,4 @@ Endpoint-urile reprezintă o propunere preliminară. Regulile încă deschise pr
 7. **Modificarea emailului:** stabilirea procesului de reverificare atunci când utilizatorul își schimbă adresa.
 8. **Validarea obiectivelor:** definirea combinațiilor permise între tipurile de obiective, unitățile de măsură și perioade.
 
-**Notă:** Acesta este modelul preliminar al bazei de date, versiunea 3. Constrângerile de apartenență pot fi implementate prin chei externe compuse și verificări suplimentare în backend.
+**Notă:** Acesta este modelul preliminar al bazei de date, versiunea 4. Constrângerile de apartenență pot fi implementate prin chei externe compuse și verificări suplimentare în backend.
