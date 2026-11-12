@@ -99,6 +99,7 @@ PostgreSQL va stoca informațiile necesare funcționării aplicației.
 | `habit_schedule` | Programarea obiceiurilor |
 | `habit_completions` | Istoricul realizării obiceiurilor |
 | `goals` | Obiectivele personale |
+| `articles` | Articole educative |
 
 Accesul la baza de date se realizează exclusiv prin backend, utilizând interogări parametrizate sau un ORM.
 
