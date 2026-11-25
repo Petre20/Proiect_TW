@@ -1,0 +1,1 @@
+"""Servicii pentru logica aplicatiei."""

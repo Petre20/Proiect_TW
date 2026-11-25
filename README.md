@@ -1,100 +1,100 @@
 
 # WellTrack
 
-WellTrack este o aplicație web destinată monitorizării activităților fizice și a obiceiurilor sănătoase. Platforma permite utilizatorilor să își organizeze activitățile, să stabilească obiective personale și să urmărească progresul în timp.
+WellTrack este o aplicatie web destinata monitorizarii activitatilor fizice si a obiceiurilor sanatoase. Platforma permite utilizatorilor sa isi organizeze activitatile, sa stabileasca obiective personale si sa urmareasca progresul in timp.
 
-Proiect dezvoltat în cadrul disciplinei **Tehnologii Web**, anul universitar 2026–2027.
+Proiect dezvoltat in cadrul disciplinei **Tehnologii Web**, anul universitar 2026–2027.
 
-## 1. Problema abordată
+## 1. Problema abordata
 
-Menținerea unui stil de viață echilibrat presupune organizarea activităților fizice și respectarea unor obiceiuri sănătoase. Monitorizarea manuală a acestora poate fi dificilă, mai ales atunci când utilizatorii urmăresc mai multe obiective simultan.
+Mentinerea unui stil de viata echilibrat presupune organizarea activitatilor fizice si respectarea unor obiceiuri sanatoase. Monitorizarea manuala a acestora poate fi dificila, mai ales atunci cand utilizatorii urmaresc mai multe obiective simultan.
 
-WellTrack propune o soluție centralizată prin care utilizatorii își pot înregistra activitățile, gestiona obiceiurile zilnice și analiza progresul personal.
+WellTrack propune o solutie centralizata prin care utilizatorii isi pot inregistra activitatile, gestiona obiceiurile zilnice si analiza progresul personal.
 
 ## 2. Obiectivele proiectului
 
-- Dezvoltarea unei aplicații web interactive și responsive.
-- Implementarea unui sistem de autentificare și gestionare a conturilor.
-- Gestionarea activităților fizice și a obiceiurilor personale.
-- Stabilirea și monitorizarea obiectivelor individuale.
-- Vizualizarea progresului prin statistici și grafice.
-- Asigurarea persistenței și securității datelor utilizatorilor.
+- Dezvoltarea unei aplicatii web interactive si responsive.
+- Implementarea unui sistem de autentificare si gestionare a conturilor.
+- Gestionarea activitatilor fizice si a obiceiurilor personale.
+- Stabilirea si monitorizarea obiectivelor individuale.
+- Vizualizarea progresului prin statistici si grafice.
+- Asigurarea persistentei si securitatii datelor utilizatorilor.
 
-## 3. Utilizatori vizați
+## 3. Utilizatori vizati
 
-Aplicația se adresează persoanelor care doresc să își organizeze activitățile fizice, să dezvolte obiceiuri sănătoase și să urmărească atingerea obiectivelor personale.
+Aplicatia se adreseaza persoanelor care doresc sa isi organizeze activitatile fizice, sa dezvolte obiceiuri sanatoase si sa urmareasca atingerea obiectivelor personale.
 
-Sistemul include două roluri:
+Sistemul include doua roluri:
 
-- **Utilizator:** gestionează activitățile, obiceiurile și obiectivele proprii.
-- **Administrator:** gestionează conturile utilizatorilor și accesul la aplicație.
+- **Utilizator:** gestioneaza activitatile, obiceiurile si obiectivele proprii.
+- **Administrator:** gestioneaza conturile utilizatorilor si accesul la aplicatie.
 
-## 4. Funcționalități propuse
+## 4. Functionalitati propuse
 
-### Funcționalități obligatorii
+### Functionalitati obligatorii
 
-- **Autentificare și gestionarea contului:** înregistrare, verificarea emailului, autentificare și deconectare.
-- **Gestionarea activităților:** definirea tipurilor de activități și înregistrarea sesiunilor efectuate.
-- **Gestionarea obiceiurilor:** crearea rutinelor zilnice sau săptămânale și marcarea realizării acestora.
-- **Gestionarea obiectivelor:** stabilirea obiectivelor personale și calcularea progresului.
-- **Dashboard:** afișarea informațiilor relevante despre activități, obiceiuri și obiective.
-- **Statistici:** vizualizarea evoluției activităților și a progresului prin grafice.
-- **Import/Export CSV:** importul și exportul datelor despre activități.
-- **Administrare:** vizualizarea și gestionarea conturilor utilizatorilor.
+- **Autentificare si gestionarea contului:** inregistrare, verificarea emailului, autentificare si deconectare.
+- **Gestionarea activitatilor:** definirea tipurilor de activitati si inregistrarea sesiunilor efectuate.
+- **Gestionarea obiceiurilor:** crearea rutinelor zilnice sau saptamanale si marcarea realizarii acestora.
+- **Gestionarea obiectivelor:** stabilirea obiectivelor personale si calcularea progresului.
+- **Dashboard:** afisarea informatiilor relevante despre activitati, obiceiuri si obiective.
+- **Statistici:** vizualizarea evolutiei activitatilor si a progresului prin grafice.
+- **Import/Export CSV:** importul si exportul datelor despre activitati.
+- **Administrare:** vizualizarea si gestionarea conturilor utilizatorilor.
 
-### Funcționalități opționale
+### Functionalitati optionale
 
-- Calendar interactiv pentru vizualizarea activităților.
-- Sistem de realizări și insigne virtuale.
-- Compararea progresului între diferite perioade.
+- Calendar interactiv pentru vizualizarea activitatilor.
+- Sistem de realizari si insigne virtuale.
+- Compararea progresului intre diferite perioade.
 
 ## 5. Tehnologii utilizate
 
-| Componentă | Tehnologii |
+| Componenta | Tehnologii |
 |---|---|
 | Frontend | React, JavaScript, HTML5, CSS3 |
 | Backend | Python, FastAPI |
-| Bază de date | PostgreSQL |
+| Baza de date | PostgreSQL |
 | API | REST |
 | Autentificare | Session-based authentication |
 | Versionare | Git, GitHub |
 | Design UI/UX | Figma |
 
-### Arhitectură
+### Arhitectura
 
-Aplicația utilizează o arhitectură client-server:
+Aplicatia utilizeaza o arhitectura client-server:
 
-- **React** gestionează interfața și interacțiunea cu utilizatorul.
-- **FastAPI** implementează API-ul REST, logica aplicației și validarea datelor.
-- **PostgreSQL** asigură stocarea persistentă a informațiilor.
+- **React** gestioneaza interfata si interactiunea cu utilizatorul.
+- **FastAPI** implementeaza API-ul REST, logica aplicatiei si validarea datelor.
+- **PostgreSQL** asigura stocarea persistenta a informatiilor.
 
-Comunicarea dintre frontend și backend se realizează prin cereri HTTP, folosind formatul JSON.
+Comunicarea dintre frontend si backend se realizeaza prin cereri HTTP, folosind formatul JSON.
 
 ## 6. Echipa proiectului
 
 
 ### Student 1 – Hotea Emanuel
 
-**Responsabilități:**
+**Responsabilitati:**
 - Dezvoltarea frontend-ului folosind React.
-- Implementarea interfețelor și a componentelor reutilizabile.
+- Implementarea interfetelor si a componentelor reutilizabile.
 - Integrarea frontend-ului cu API-ul REST.
-- Participarea la testare și documentație.
+- Participarea la testare si documentatie.
 
 ### Student 2 – Lupu Eugen
 
-**Responsabilități:**
+**Responsabilitati:**
 - Dezvoltarea backend-ului folosind FastAPI.
-- Proiectarea și implementarea bazei de date PostgreSQL.
-- Implementarea autentificării, autorizării și validării datelor.
-- Participarea la testare și documentație.
+- Proiectarea si implementarea bazei de date PostgreSQL.
+- Implementarea autentificarii, autorizarii si validarii datelor.
+- Participarea la testare si documentatie.
 
-Ambii membri contribuie la integrarea componentelor, gestionarea repository-ului și prezentarea proiectului.
+Ambii membri contribuie la integrarea componentelor, gestionarea repository-ului si prezentarea proiectului.
 
-## 8. Limitări
+## 8. Limitari
 
-WellTrack este destinat exclusiv monitorizării activităților și obiceiurilor personale.
+WellTrack este destinat exclusiv monitorizarii activitatilor si obiceiurilor personale.
 
-Aplicația nu oferă diagnostic medical, interpretarea clinică a datelor sau recomandări medicale automate.
+Aplicatia nu ofera diagnostic medical, interpretarea clinica a datelor sau recomandari medicale automate.
 
 
