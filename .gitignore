@@ -20,3 +20,17 @@ dist/
 
 # macOS
 .DS_Store
+
+# Local planning docs (specs, plans)
+docs/superpowers/
+# Impeccable design docs and state (local only)
+PRODUCT.md
+DESIGN.md
+.impeccable/
+
+# Agent tooling (local only)
+.claude/
+.agent/
+.agents/
+.codex/
+.gemini/
