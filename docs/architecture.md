@@ -110,7 +110,7 @@ Modelul relațional este documentat separat în `docs/database.md`.
 
 Aplicația va utiliza Resend pentru trimiterea emailurilor tranzacționale, în special pentru verificarea adreselor de email.
 
-Backend-ul FastAPI va comunica cu Resend prin API-ul acestuia, folosind SDK-ul oficial Python.
+Backend-ul FastAPI comunica cu API-ul HTTPS Resend prin HTTPX. In dezvoltare, configuratia implicita salveaza emailurile de verificare in `backend/.local/emails/`, fara trimitere externa. Trimiterea prin Resend se activeaza din `.env`.
 
 Tokenurile de verificare vor fi generate și validate de backend, iar hash-ul și data expirării vor fi stocate în tabelul `users`.
 

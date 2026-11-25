@@ -1,31 +1,31 @@
 
 # 2. Modelul preliminar al bazei de date – WellTrack
 
-## 2.1. Descriere generală
+## 2.1. Descriere generala
 
-Baza de date a aplicației **WellTrack** va fi implementată folosind **PostgreSQL**.
+Baza de date a aplicatiei **WellTrack** va fi implementata folosind **PostgreSQL**.
 
-Modelul preliminar conține 9 tabele:
+Modelul preliminar contine 9 tabele:
 
-- `users` – conturile utilizatorilor, verificarea emailului și interesele pentru recomandarea articolelor.
+- `users` – conturile utilizatorilor, verificarea emailului si interesele pentru recomandarea articolelor.
 - `sessions` – sesiunile de autentificare.
-- `activity_types` – tipurile de activități definite de utilizatori.
-- `activities` – istoricul activităților efectuate.
+- `activity_types` – tipurile de activitati definite de utilizatori.
+- `activities` – istoricul activitatilor efectuate.
 - `habits` – obiceiurile definite de utilizatori.
 - `habit_schedule` – zilele programate pentru obiceiuri.
-- `habit_completions` – istoricul realizării obiceiurilor.
+- `habit_completions` – istoricul realizarii obiceiurilor.
 - `goals` – obiectivele personale.
-- `articles` – catalogul comun de articole educaționale.
+- `articles` – catalogul comun de articole educationale.
 
-**Observație:** Activities și Habits sunt independente. Un utilizator poate înregistra activități fără să bifeze obiceiuri și invers.
+**Observatie:** Activities si Habits sunt independente. Un utilizator poate inregistra activitati fara sa bifeze obiceiuri si invers.
 
 ## 2.2. Structura tabelelor
 
 ### Tabelul `users`
 
-Stochează informațiile necesare autentificării, verificării emailului, administrării conturilor și recomandării articolelor după interesele selectate.
+Stocheaza informatiile necesare autentificarii, verificarii emailului, administrarii conturilor si recomandarii articolelor dupa interesele selectate.
 
-| Câmp | Tip PostgreSQL | Descriere |
+| Camp | Tip PostgreSQL | Descriere |
 |---|---|---|
 | `id` | BIGINT (PK) | Identificator unic |
 | `name` | VARCHAR(100) | Numele utilizatorului |
@@ -33,258 +33,260 @@ Stochează informațiile necesare autentificării, verificării emailului, admin
 | `password_hash` | TEXT | Hash-ul parolei |
 | `role` | VARCHAR(20) | `user` sau `admin` |
 | `is_active` | BOOLEAN | Starea contului |
-| `email_verified` | BOOLEAN | Indică dacă emailul a fost verificat |
+| `email_verified` | BOOLEAN | Indica daca emailul a fost verificat |
 | `email_verification_token_hash` | TEXT, NULL | Hash-ul tokenului de verificare |
-| `email_verification_expires_at` | TIMESTAMPTZ, NULL | Momentul expirării tokenului |
+| `email_verification_expires_at` | TIMESTAMPTZ, NULL | Momentul expirarii tokenului |
 | `interests` | TEXT[] | Lista temelor de interes selectate, de exemplu `running`, `habits` sau `recovery` |
-| `created_at` | TIMESTAMPTZ | Momentul creării contului |
+| `created_at` | TIMESTAMPTZ | Momentul crearii contului |
 
-**Constrângeri:**
-- `email` trebuie să fie unic, fără diferențiere între litere mari și mici.
-- `role` acceptă valorile `user` și `admin`, având implicit `user`.
+**Constrangeri:**
+- `email` trebuie sa fie unic, fara diferentiere intre litere mari si mici.
+- `role` accepta valorile `user` si `admin`, avand implicit `user`.
 - `is_active` are implicit valoarea `TRUE`.
 - `email_verified` are implicit valoarea `FALSE`.
-- Un cont dezactivat nu poate accesa aplicația.
-- Autentificarea este permisă numai după verificarea emailului.
-- Câmpurile tokenului și expirării sunt fie ambele completate, fie ambele `NULL`.
+- Un cont dezactivat nu poate accesa aplicatia.
+- Autentificarea este permisa numai dupa verificarea emailului.
+- Campurile tokenului si expirarii sunt fie ambele completate, fie ambele `NULL`.
 - Un utilizator poate avea un singur token de verificare valid la un moment dat.
-- `interests` este obligatoriu și are implicit valoarea unui tablou gol (`{}`).
-- Interesele nu pot conține valori `NULL`, goale sau duplicate. Backend-ul validează valorile folosind același vocabular de teme ca pentru `articles.topic`.
+- `interests` este obligatoriu si are implicit valoarea unui tablou gol (`{}`).
+- Interesele nu pot contine valori `NULL`, goale sau duplicate. Backend-ul valideaza valorile folosind acelasi vocabular de teme ca pentru `articles.topic`.
 
-**Observații:**
-- Parolele sunt stocate exclusiv sub formă de hash.
-- Tokenul de verificare este generat aleatoriu și trimis utilizatorului prin email.
-- În baza de date se stochează doar hash-ul tokenului.
-- După verificarea emailului, `email_verified` devine `TRUE`, iar câmpurile aferente tokenului sunt resetate la `NULL`.
-- La retrimiterea emailului, tokenul anterior este înlocuit și devine invalid.
+**Observatii:**
+- Parolele sunt stocate exclusiv sub forma de hash.
+- Tokenul de verificare este generat aleatoriu si trimis utilizatorului prin email.
+- In baza de date se stocheaza doar hash-ul tokenului.
+- Dupa verificarea emailului, `email_verified` devine `TRUE`, iar campurile aferente tokenului sunt resetate la `NULL`.
+- La retrimiterea emailului, tokenul anterior este inlocuit si devine invalid.
 
 ### Tabelul `sessions`
 
-Stochează sesiunile utilizatorilor autentificați.
+Stocheaza sesiunile utilizatorilor autentificati.
 
-| Câmp | Tip PostgreSQL | Descriere |
+| Camp | Tip PostgreSQL | Descriere |
 |---|---|---|
 | `id` | BIGINT (PK) | Identificator unic |
 | `user_id` | BIGINT (FK) | Utilizatorul autentificat |
 | `session_token_hash` | TEXT | Hash-ul tokenului de sesiune |
-| `created_at` | TIMESTAMPTZ | Momentul creării sesiunii |
-| `expires_at` | TIMESTAMPTZ | Momentul expirării sesiunii |
+| `created_at` | TIMESTAMPTZ | Momentul crearii sesiunii |
+| `expires_at` | TIMESTAMPTZ | Momentul expirarii sesiunii |
 
-**Constrângeri:**
-- `user_id` referă `users(id)`.
-- `session_token_hash` trebuie să fie unic.
-- `expires_at` trebuie să fie ulterior lui `created_at`.
+**Constrangeri:**
+- `user_id` refera `users(id)`.
+- `session_token_hash` trebuie sa fie unic.
+- `expires_at` trebuie sa fie ulterior lui `created_at`.
 - Un utilizator poate avea mai multe sesiuni simultan.
 
-**Observații:**
-- Aplicația folosește autentificare session-based.
-- Sesiunea este creată după autentificarea reușită.
-- Browserul primește un cookie `HttpOnly` care conține tokenul sesiunii.
-- În baza de date se păstrează doar hash-ul tokenului.
-- La logout, sesiunea este invalidată.
-- Sesiunile expirate sunt respinse și pot fi eliminate periodic.
-- Backend-ul verifică starea contului și permisiunile utilizatorului la accesarea resurselor protejate.
-- În producție, cookie-urile vor utiliza `Secure`, o politică `SameSite` adecvată și protecție CSRF.
+**Observatii:**
+- Aplicatia foloseste autentificare session-based.
+- Sesiunea este creata dupa autentificarea reusita.
+- Browserul primeste un cookie `HttpOnly` care contine tokenul sesiunii.
+- In baza de date se pastreaza doar hash-ul tokenului.
+- La logout, sesiunea este invalidata.
+- Sesiunile expirate sunt respinse si pot fi eliminate periodic.
+- Durata implicita a unei sesiuni este de 7 zile, configurabila prin `SESSION_TTL_DAYS`.
+- Backend-ul verifica starea contului si permisiunile utilizatorului la accesarea resurselor protejate.
+- In productie, cookie-urile vor utiliza `Secure`, o politica `SameSite` adecvata si protectie CSRF.
+- Implementarea foloseste cookie-ul `welltrack_session`, cu `HttpOnly` si `SameSite=Lax`. Cererile care modifica starea necesita headerul `X-Requested-With: WellTrack` si o origine permisa, atunci cand browserul transmite `Origin`.
 
 ### Tabelul `activity_types`
 
-Conține tipurile de activități definite individual de fiecare utilizator.
+Contine tipurile de activitati definite individual de fiecare utilizator.
 
-| Câmp | Tip PostgreSQL | Descriere |
+| Camp | Tip PostgreSQL | Descriere |
 |---|---|---|
 | `id` | BIGINT (PK) | Identificator unic |
 | `user_id` | BIGINT (FK) | Utilizatorul care a definit activitatea |
-| `name` | VARCHAR(100) | Denumirea activității |
-| `created_at` | TIMESTAMPTZ | Momentul definirii activității |
+| `name` | VARCHAR(100) | Denumirea activitatii |
+| `created_at` | TIMESTAMPTZ | Momentul definirii activitatii |
 
-**Constrângeri:**
-- `user_id` referă `users(id)`.
-- Combinația `(user_id, name)` trebuie să fie unică.
-- Fiecare utilizator își poate defini propriile tipuri de activități.
-- Tipurile de activități sunt independente de obiceiuri.
+**Constrangeri:**
+- `user_id` refera `users(id)`.
+- Combinatia `(user_id, name)` trebuie sa fie unica.
+- Fiecare utilizator isi poate defini propriile tipuri de activitati.
+- Tipurile de activitati sunt independente de obiceiuri.
 
 ### Tabelul `activities`
 
-Stochează fiecare înregistrare a unei activități efectuate de utilizator.
+Stocheaza fiecare inregistrare a unei activitati efectuate de utilizator.
 
-| Câmp | Tip PostgreSQL | Descriere |
+| Camp | Tip PostgreSQL | Descriere |
 |---|---|---|
 | `id` | BIGINT (PK) | Identificator unic |
 | `user_id` | BIGINT (FK) | Utilizatorul asociat |
-| `activity_type_id` | BIGINT (FK) | Tipul activității |
-| `activity_date` | DATE | Data efectuării activității |
-| `start_time` | TIME, NULL | Ora începerii activității |
-| `duration_minutes` | INTEGER, NULL | Durata activității |
-| `distance_km` | NUMERIC(8,2), NULL | Distanța parcursă |
-| `intensity` | VARCHAR(20), NULL | Intensitatea activității |
-| `notes` | TEXT, NULL | Observații opționale |
-| `created_at` | TIMESTAMPTZ | Momentul înregistrării |
+| `activity_type_id` | BIGINT (FK) | Tipul activitatii |
+| `activity_date` | DATE | Data efectuarii activitatii |
+| `start_time` | TIME, NULL | Ora inceperii activitatii |
+| `duration_minutes` | INTEGER, NULL | Durata activitatii |
+| `distance_km` | NUMERIC(8,2), NULL | Distanta parcursa |
+| `intensity` | VARCHAR(20), NULL | Intensitatea activitatii |
+| `notes` | TEXT, NULL | Observatii optionale |
+| `created_at` | TIMESTAMPTZ | Momentul inregistrarii |
 
-**Constrângeri:**
-- `user_id` referă `users(id)`.
-- `activity_type_id` referă `activity_types(id)`.
-- Tipul activității trebuie să aparțină utilizatorului.
-- `duration_minutes` și `distance_km` trebuie să fie pozitive atunci când sunt completate.
-- `intensity` acceptă valorile `light`, `moderate`, `hard` sau `NULL`.
-- Același tip de activitate poate fi înregistrat de mai multe ori în aceeași zi.
+**Constrangeri:**
+- `user_id` refera `users(id)`.
+- `activity_type_id` refera `activity_types(id)`.
+- Tipul activitatii trebuie sa apartina utilizatorului.
+- `duration_minutes` si `distance_km` trebuie sa fie pozitive atunci cand sunt completate.
+- `intensity` accepta valorile `light`, `moderate`, `hard` sau `NULL`.
+- Acelasi tip de activitate poate fi inregistrat de mai multe ori in aceeasi zi.
 
-**Observație:** `activity_date` reprezintă data realizării activității, în timp ce `created_at` reprezintă momentul introducerii în aplicație.
+**Observatie:** `activity_date` reprezinta data realizarii activitatii, in timp ce `created_at` reprezinta momentul introducerii in aplicatie.
 
 ### Tabelul `habits`
 
-Stochează obiceiurile repetitive definite de utilizatori.
+Stocheaza obiceiurile repetitive definite de utilizatori.
 
-| Câmp | Tip PostgreSQL | Descriere |
+| Camp | Tip PostgreSQL | Descriere |
 |---|---|---|
 | `id` | BIGINT (PK) | Identificator unic |
 | `user_id` | BIGINT (FK) | Proprietarul obiceiului |
 | `name` | VARCHAR(150) | Denumirea obiceiului |
 | `frequency` | VARCHAR(20) | `daily` sau `selected_days` |
-| `start_date` | DATE | Data începerii obiceiului |
-| `is_archived` | BOOLEAN | Indică dacă obiceiul este arhivat |
-| `created_at` | TIMESTAMPTZ | Momentul creării |
+| `start_date` | DATE | Data inceperii obiceiului |
+| `is_archived` | BOOLEAN | Indica daca obiceiul este arhivat |
+| `created_at` | TIMESTAMPTZ | Momentul crearii |
 
-**Constrângeri:**
-- `user_id` referă `users(id)`.
-- `frequency` acceptă valorile `daily` și `selected_days`.
+**Constrangeri:**
+- `user_id` refera `users(id)`.
+- `frequency` accepta valorile `daily` si `selected_days`.
 - `is_archived` are implicit valoarea `FALSE`.
-- Arhivarea unui obicei nu șterge istoricul realizărilor.
-- Obiceiurile sunt independente de activități.
+- Arhivarea unui obicei nu sterge istoricul realizarilor.
+- Obiceiurile sunt independente de activitati.
 
 ### Tabelul `habit_schedule`
 
-Stochează zilele săptămânii în care este programat un obicei.
+Stocheaza zilele saptamanii in care este programat un obicei.
 
-| Câmp | Tip PostgreSQL | Descriere |
+| Camp | Tip PostgreSQL | Descriere |
 |---|---|---|
 | `habit_id` | BIGINT (PK, FK) | Obiceiul asociat |
-| `weekday` | SMALLINT (PK) | Ziua săptămânii (1–7) |
+| `weekday` | SMALLINT (PK) | Ziua saptamanii (1–7) |
 
-**Constrângeri:**
-- `habit_id` referă `habits(id)`.
-- Cheia primară este `(habit_id, weekday)`.
-- `weekday` acceptă valori între 1 (luni) și 7 (duminică).
-- Pentru `selected_days` trebuie selectată cel puțin o zi.
+**Constrangeri:**
+- `habit_id` refera `habits(id)`.
+- Cheia primara este `(habit_id, weekday)`.
+- `weekday` accepta valori intre 1 (luni) si 7 (duminica).
+- Pentru `selected_days` trebuie selectata cel putin o zi.
 - Pentru `daily`, toate zilele sunt considerate programate implicit.
 
 ### Tabelul `habit_completions`
 
-Stochează zilele în care utilizatorul a bifat realizarea unui obicei.
+Stocheaza zilele in care utilizatorul a bifat realizarea unui obicei.
 
-| Câmp | Tip PostgreSQL | Descriere |
+| Camp | Tip PostgreSQL | Descriere |
 |---|---|---|
 | `id` | BIGINT (PK) | Identificator unic |
 | `habit_id` | BIGINT (FK) | Obiceiul realizat |
-| `completion_date` | DATE | Data realizării |
-| `created_at` | TIMESTAMPTZ | Momentul bifării |
+| `completion_date` | DATE | Data realizarii |
+| `created_at` | TIMESTAMPTZ | Momentul bifarii |
 
-**Constrângeri:**
-- `habit_id` referă `habits(id)`.
-- Combinația `(habit_id, completion_date)` trebuie să fie unică.
-- Un obicei poate fi bifat o singură dată pentru aceeași zi.
+**Constrangeri:**
+- `habit_id` refera `habits(id)`.
+- Combinatia `(habit_id, completion_date)` trebuie sa fie unica.
+- Un obicei poate fi bifat o singura data pentru aceeasi zi.
 
-**Observație:** Bifarea confirmă realizarea obiceiului, fără stocarea unei cantități numerice.
+**Observatie:** Bifarea confirma realizarea obiceiului, fara stocarea unei cantitati numerice.
 
 ### Tabelul `goals`
 
-Stochează obiectivele personale ale utilizatorilor.
+Stocheaza obiectivele personale ale utilizatorilor.
 
-| Câmp | Tip PostgreSQL | Descriere |
+| Camp | Tip PostgreSQL | Descriere |
 |---|---|---|
 | `id` | BIGINT (PK) | Identificator unic |
 | `user_id` | BIGINT (FK) | Proprietarul obiectivului |
-| `activity_type_id` | BIGINT (FK), NULL | Tipul activității urmărite |
-| `habit_id` | BIGINT (FK), NULL | Obiceiul urmărit |
+| `activity_type_id` | BIGINT (FK), NULL | Tipul activitatii urmarite |
+| `habit_id` | BIGINT (FK), NULL | Obiceiul urmarit |
 | `name` | VARCHAR(150) | Denumirea obiectivului |
-| `target_value` | NUMERIC(10,2) | Valoarea țintă |
+| `target_value` | NUMERIC(10,2) | Valoarea tinta |
 | `target_unit` | VARCHAR(20) | `sessions`, `minutes`, `km`, `days` |
 | `period` | VARCHAR(20) | `daily`, `weekly`, `monthly`, `custom` |
-| `start_date` | DATE | Data începerii obiectivului |
-| `end_date` | DATE, NULL | Data încheierii |
+| `start_date` | DATE | Data inceperii obiectivului |
+| `end_date` | DATE, NULL | Data incheierii |
 | `is_active` | BOOLEAN | Starea obiectivului |
-| `created_at` | TIMESTAMPTZ | Momentul creării |
+| `created_at` | TIMESTAMPTZ | Momentul crearii |
 
-**Constrângeri:**
-- `user_id` referă `users(id)`.
-- `activity_type_id` referă `activity_types(id)`, dacă este completat.
-- `habit_id` referă `habits(id)`, dacă este completat.
-- `target_value` trebuie să fie pozitiv.
-- `end_date` trebuie să fie mai mare sau egală cu `start_date`.
-- `activity_type_id` și `habit_id` nu pot fi completate simultan.
-- Activitatea sau obiceiul asociat trebuie să aparțină utilizatorului.
+**Constrangeri:**
+- `user_id` refera `users(id)`.
+- `activity_type_id` refera `activity_types(id)`, daca este completat.
+- `habit_id` refera `habits(id)`, daca este completat.
+- `target_value` trebuie sa fie pozitiv.
+- `end_date` trebuie sa fie mai mare sau egala cu `start_date`.
+- `activity_type_id` si `habit_id` nu pot fi completate simultan.
+- Activitatea sau obiceiul asociat trebuie sa apartina utilizatorului.
 
 **Interpretarea obiectivelor:**
-- `activity_type_id` completat: obiectiv pentru o anumită activitate.
+- `activity_type_id` completat: obiectiv pentru o anumita activitate.
 - `habit_id` completat: obiectiv pentru un anumit obicei.
-- Ambele câmpuri `NULL`: obiectiv pentru toate activitățile.
+- Ambele campuri `NULL`: obiectiv pentru toate activitatile.
 
-**Unități permise:**
-- Activități: `sessions`, `minutes`, `km`.
+**Unitati permise:**
+- Activitati: `sessions`, `minutes`, `km`.
 - Obiceiuri: `days`.
 
-**Observație:** Progresul obiectivelor nu este stocat separat, ci calculat din `activities` sau `habit_completions`.
+**Observatie:** Progresul obiectivelor nu este stocat separat, ci calculat din `activities` sau `habit_completions`.
 
 ### Tabelul `articles`
 
-Stochează articolele educaționale disponibile în secțiunea Learn. Catalogul este comun tuturor utilizatorilor; fiecare articol este stocat o singură dată.
+Stocheaza articolele educationale disponibile in sectiunea Learn. Catalogul este comun tuturor utilizatorilor; fiecare articol este stocat o singura data.
 
-| Câmp | Tip PostgreSQL | Descriere |
+| Camp | Tip PostgreSQL | Descriere |
 |---|---|---|
 | `id` | BIGINT (PK) | Identificator unic |
 | `title` | VARCHAR(255) | Titlul articolului |
-| `summary` | TEXT | Rezumatul afișat în lista articolelor |
-| `content` | TEXT, NULL | Conținutul articolului în format Markdown, atunci când este disponibil pentru afișare în aplicație |
-| `topic` | VARCHAR(50) | Tema principală, de exemplu `running`, `habits` sau `recovery` |
+| `summary` | TEXT | Rezumatul afisat in lista articolelor |
+| `content` | TEXT, NULL | Continutul articolului in format Markdown, atunci cand este disponibil pentru afisare in aplicatie |
+| `topic` | VARCHAR(50) | Tema principala, de exemplu `running`, `habits` sau `recovery` |
 | `image_url` | TEXT, NULL | Adresa imaginii de prezentare |
 | `source_name` | VARCHAR(150), NULL | Denumirea sursei pentru un articol extern |
-| `source_url` | TEXT, NULL | Linkul către articolul original, dacă există |
-| `published_at` | TIMESTAMPTZ | Momentul publicării articolului |
-| `created_at` | TIMESTAMPTZ | Momentul adăugării în catalog |
-| `updated_at` | TIMESTAMPTZ | Momentul ultimei actualizări a înregistrării |
+| `source_url` | TEXT, NULL | Linkul catre articolul original, daca exista |
+| `published_at` | TIMESTAMPTZ | Momentul publicarii articolului |
+| `created_at` | TIMESTAMPTZ | Momentul adaugarii in catalog |
+| `updated_at` | TIMESTAMPTZ | Momentul ultimei actualizari a inregistrarii |
 
-**Constrângeri:**
+**Constrangeri:**
 
-- `title`, `summary` și `topic` sunt obligatorii și nu pot fi șiruri goale sau formate doar din spații.
-- Articolul trebuie să aibă fie un `content` nevid, fie un `source_url` nevid, fie ambele.
-- `updated_at` trebuie să fie mai mare sau egal cu `created_at`.
-- Fiecare articol are o singură temă principală, păstrată direct în câmpul `topic`.
+- `title`, `summary` si `topic` sunt obligatorii si nu pot fi siruri goale sau formate doar din spatii.
+- Articolul trebuie sa aiba fie un `content` nevid, fie un `source_url` nevid, fie ambele.
+- `updated_at` trebuie sa fie mai mare sau egal cu `created_at`.
+- Fiecare articol are o singura tema principala, pastrata direct in campul `topic`.
 
-**Observații:**
+**Observatii:**
 
-- Articolele pot fi proprii sau preluate din surse care permit utilizarea conținutului. Alegerea și integrarea unui API extern vor fi stabilite ulterior.
-- Dacă este disponibil doar rezumatul și linkul original, utilizatorul va putea deschide articolul la sursă. Lectura integrală în aplicație necesită completarea câmpului `content`.
-- Cuprinsul și timpul estimat de lectură pot fi calculate din conținut, fără câmpuri suplimentare.
-- Recomandarea articolelor se bazează pe potrivirea dintre `topic` și lista `users.interests`.
+- Articolele pot fi proprii sau preluate din surse care permit utilizarea continutului. Alegerea si integrarea unui API extern vor fi stabilite ulterior.
+- Daca este disponibil doar rezumatul si linkul original, utilizatorul va putea deschide articolul la sursa. Lectura integrala in aplicatie necesita completarea campului `content`.
+- Cuprinsul si timpul estimat de lectura pot fi calculate din continut, fara campuri suplimentare.
+- Recomandarea articolelor se bazeaza pe potrivirea dintre `topic` si lista `users.interests`.
 
-### Recomandarea articolelor după interese
+### Recomandarea articolelor dupa interese
 
-Interesele sunt selectate explicit de utilizator și pot fi actualizate ulterior. Pentru această versiune, lista este păstrată direct în `users.interests`, fără un tabel suplimentar.
+Interesele sunt selectate explicit de utilizator si pot fi actualizate ulterior. Pentru aceasta versiune, lista este pastrata direct in `users.interests`, fara un tabel suplimentar.
 
 **Comportament propus:**
 
-1. Backend-ul identifică utilizatorul din sesiune și citește interesele selectate.
-2. Selectează articolele a căror temă principală apare în `users.interests` și le ordonează după `published_at` descrescător, apoi după `id` descrescător.
-3. Dacă utilizatorul nu a selectat interese sau nu există articole potrivite, afișează cele mai recente articole din catalog ca selecție generală.
-4. Modificarea intereselor este reflectată la următoarea solicitare a recomandărilor.
+1. Backend-ul identifica utilizatorul din sesiune si citeste interesele selectate.
+2. Selecteaza articolele a caror tema principala apare in `users.interests` si le ordoneaza dupa `published_at` descrescator, apoi dupa `id` descrescator.
+3. Daca utilizatorul nu a selectat interese sau nu exista articole potrivite, afiseaza cele mai recente articole din catalog ca selectie generala.
+4. Modificarea intereselor este reflectata la urmatoarea solicitare a recomandarilor.
 
-De exemplu, pentru interesele `running` și `recovery`, sunt recomandate articolele cu una dintre aceste teme. Recomandările sunt calculate la cerere; nu se stochează o relație individuală între utilizator și articol.
+De exemplu, pentru interesele `running` si `recovery`, sunt recomandate articolele cu una dintre aceste teme. Recomandarile sunt calculate la cerere; nu se stocheaza o relatie individuala intre utilizator si articol.
 
-## 2.3. Relațiile dintre tabele
+## 2.3. Relatiile dintre tabele
 
-| Relație | Cardinalitate | Descriere |
+| Relatie | Cardinalitate | Descriere |
 |---|---|---|
 | `users` → `sessions` | 1:N | Un utilizator poate avea mai multe sesiuni |
-| `users` → `activity_types` | 1:N | Un utilizator poate defini mai multe tipuri de activități |
-| `users` → `activities` | 1:N | Un utilizator poate înregistra mai multe activități |
-| `activity_types` → `activities` | 1:N | Un tip poate avea mai multe înregistrări |
+| `users` → `activity_types` | 1:N | Un utilizator poate defini mai multe tipuri de activitati |
+| `users` → `activities` | 1:N | Un utilizator poate inregistra mai multe activitati |
+| `activity_types` → `activities` | 1:N | Un tip poate avea mai multe inregistrari |
 | `users` → `habits` | 1:N | Un utilizator poate defini mai multe obiceiuri |
 | `habits` → `habit_schedule` | 1:N | Un obicei poate avea mai multe zile programate |
-| `habits` → `habit_completions` | 1:N | Un obicei poate avea mai multe realizări |
+| `habits` → `habit_completions` | 1:N | Un obicei poate avea mai multe realizari |
 | `users` → `goals` | 1:N | Un utilizator poate avea mai multe obiective |
-| `activity_types` → `goals` | 1:N (opțional) | Un tip poate fi urmărit de mai multe obiective |
-| `habits` → `goals` | 1:N (opțional) | Un obicei poate fi urmărit de mai multe obiective |
+| `activity_types` → `goals` | 1:N (optional) | Un tip poate fi urmarit de mai multe obiective |
+| `habits` → `goals` | 1:N (optional) | Un obicei poate fi urmarit de mai multe obiective |
 
-Tabelul `articles` reprezintă un catalog comun și nu are o cheie externă către `users`. Potrivirea temelor cu interesele utilizatorului este realizată de backend la calcularea recomandărilor.
+Tabelul `articles` reprezinta un catalog comun si nu are o cheie externa catre `users`. Potrivirea temelor cu interesele utilizatorului este realizata de backend la calcularea recomandarilor.
 
 ## 2.4. Diagrama ERD
 
@@ -398,163 +400,165 @@ erDiagram
 
 ```
 
-## 2.5. Autentificarea și verificarea emailului
+## 2.5. Autentificarea si verificarea emailului
 
-Aplicația va utiliza autentificare bazată pe sesiuni, cu stocarea acestora în PostgreSQL.
+Aplicatia va utiliza autentificare bazata pe sesiuni, cu stocarea acestora in PostgreSQL.
 
-### Înregistrarea utilizatorului
+### Inregistrarea utilizatorului
 
-1. Utilizatorul completează formularul de înregistrare.
-2. FastAPI validează datele și creează contul în `users`, cu `email_verified = FALSE`.
-3. Sistemul generează un token de verificare.
-4. Hash-ul tokenului și data expirării sunt salvate în `users`.
-5. Utilizatorul primește un email cu linkul de verificare.
-6. La accesarea linkului, FastAPI validează tokenul și expirarea.
-7. Dacă verificarea reușește, `email_verified` devine `TRUE`, iar câmpurile aferente tokenului sunt resetate la `NULL`.
+1. Utilizatorul completeaza formularul de inregistrare.
+2. FastAPI valideaza datele si creeaza contul in `users`, cu `email_verified = FALSE`.
+3. Sistemul genereaza un token de verificare.
+4. Hash-ul tokenului si data expirarii sunt salvate in `users`.
+5. Utilizatorul primeste un email cu linkul de verificare.
+6. La accesarea linkului, FastAPI valideaza tokenul si expirarea.
+7. Daca verificarea reuseste, `email_verified` devine `TRUE`, iar campurile aferente tokenului sunt resetate la `NULL`.
 
-Dacă utilizatorul solicită un nou email, sistemul generează un token nou și îl înlocuiește pe cel anterior.
+Daca utilizatorul solicita un nou email, sistemul genereaza un token nou si il inlocuieste pe cel anterior.
+
+Tokenul de verificare expira implicit dupa 60 de minute, iar retrimiterea este permisa dupa minimum 60 de secunde. In dezvoltare, mesajele sunt salvate local in `backend/.local/emails/`; trimiterea reala prin Resend se activeaza prin configuratia din `.env`. Tokenurile nu sunt returnate prin API.
 
 ### Autentificarea utilizatorului
 
-1. Utilizatorul introduce emailul și parola.
-2. FastAPI verifică datele de autentificare.
-3. Sistemul verifică `is_active` și `email_verified`.
-4. Dacă verificările reușesc, se creează o înregistrare în `sessions`.
-5. Browserul primește un cookie `HttpOnly` cu tokenul de sesiune.
-6. La cererile ulterioare, FastAPI validează sesiunea și drepturile utilizatorului.
+1. Utilizatorul introduce emailul si parola.
+2. FastAPI verifica datele de autentificare.
+3. Sistemul verifica `is_active` si `email_verified`.
+4. Daca verificarile reusesc, se creeaza o inregistrare in `sessions`.
+5. Browserul primeste un cookie `HttpOnly` cu tokenul de sesiune.
+6. La cererile ulterioare, FastAPI valideaza sesiunea si drepturile utilizatorului.
 
 ### Deconectarea utilizatorului
 
-1. Utilizatorul selectează opțiunea Logout.
-2. FastAPI invalidează sesiunea curentă.
+1. Utilizatorul selecteaza optiunea Logout.
+2. FastAPI invalideaza sesiunea curenta.
 3. Cookie-ul sesiunii este eliminat din browser.
-4. Utilizatorul nu mai poate accesa endpoint-urile protejate folosind sesiunea respectivă.
+4. Utilizatorul nu mai poate accesa endpoint-urile protejate folosind sesiunea respectiva.
 
 ## 2.6. Calcularea statisticilor
 
-Statisticile vor fi calculate folosind datele existente, fără tabele suplimentare.
+Statisticile vor fi calculate folosind datele existente, fara tabele suplimentare.
 
-| Funcționalitate | Sursa datelor |
+| Functionalitate | Sursa datelor |
 |---|---|
-| Activități recente | `activities` + `activity_types` |
+| Activitati recente | `activities` + `activity_types` |
 | Minute active | Suma `duration_minutes` |
-| Distanță totală | Suma `distance_km` |
-| Statistici săptămânale/lunare | Agregări din `activities` |
+| Distanta totala | Suma `distance_km` |
+| Statistici saptamanale/lunare | Agregari din `activities` |
 | Obiceiuri programate | `habits` + `habit_schedule` |
 | Progresul obiceiurilor | `habit_completions` |
 | Progresul obiectivelor | `goals` + `activities` sau `habit_completions` |
-| Calendarul activităților | Activități grupate după dată |
+| Calendarul activitatilor | Activitati grupate dupa data |
 
 ## 2.7. Principalele endpoint-uri propuse
 
-Backend-ul FastAPI va expune un API REST cu prefixul `/api`. Rutele din tabelele de mai jos sunt relative la acest prefix. Datele vor fi transmise în format JSON, cu excepția fișierelor CSV.
+Backend-ul FastAPI va expune un API REST cu prefixul `/api`. Rutele din tabelele de mai jos sunt relative la acest prefix. Datele vor fi transmise in format JSON, cu exceptia fisierelor CSV.
 
 **Reguli de acces:**
 
-- **Public:** nu necesită autentificare.
-- **Utilizator autentificat:** necesită o sesiune validă și un cont activ, cu emailul verificat. Accesul este limitat la datele proprii.
-- **Administrator:** necesită o sesiune validă și rolul `admin`, pe lângă condițiile unui cont activ și verificat.
-- Pentru resursele personale, backend-ul determină utilizatorul din sesiune și verifică apartenența resurselor indicate prin ID. Rolul de administrator nu acordă implicit acces la activitățile, obiceiurile sau obiectivele altor utilizatori.
+- **Public:** nu necesita autentificare.
+- **Utilizator autentificat:** necesita o sesiune valida si un cont activ, cu emailul verificat. Accesul este limitat la datele proprii.
+- **Administrator:** necesita o sesiune valida si rolul `admin`, pe langa conditiile unui cont activ si verificat.
+- Pentru resursele personale, backend-ul determina utilizatorul din sesiune si verifica apartenenta resurselor indicate prin ID. Rolul de administrator nu acorda implicit acces la activitatile, obiceiurile sau obiectivele altor utilizatori.
 
-### 2.7.1. Autentificare și cont
+### 2.7.1. Autentificare si cont
 
-| Metodă | Endpoint | Descriere | Acces |
+| Metoda | Endpoint | Descriere | Acces |
 |---|---|---|---|
-| `POST` | `/auth/register` | Creează un cont cu rolul `user` și inițiază trimiterea emailului de verificare. | Public |
-| `POST` | `/auth/verify-email` | Primește tokenul din linkul de verificare, validează hash-ul și expirarea acestuia și marchează emailul ca verificat. | Public |
-| `POST` | `/auth/resend-verification` | Primește adresa de email și solicită trimiterea unui token nou de verificare, invalidându-l pe cel anterior. | Public |
-| `POST` | `/auth/login` | Verifică emailul, parola și starea contului, creează sesiunea și setează cookie-ul `HttpOnly`. | Public |
-| `POST` | `/auth/logout` | Invalidează sesiunea curentă și elimină cookie-ul de autentificare. | Utilizator autentificat |
-| `GET` | `/auth/me` | Returnează datele contului autentificat, inclusiv rolul, fără parola hash-uită sau tokenuri. | Utilizator autentificat |
+| `POST` | `/auth/register` | Creeaza un cont cu rolul `user` si initiaza trimiterea emailului de verificare. | Public |
+| `POST` | `/auth/verify-email` | Primeste tokenul din linkul de verificare, valideaza hash-ul si expirarea acestuia si marcheaza emailul ca verificat. | Public |
+| `POST` | `/auth/resend-verification` | Primeste adresa de email si solicita trimiterea unui token nou de verificare, invalidandu-l pe cel anterior. | Public |
+| `POST` | `/auth/login` | Verifica emailul, parola si starea contului, creeaza sesiunea si seteaza cookie-ul `HttpOnly`. | Public |
+| `POST` | `/auth/logout` | Invalideaza sesiunea curenta si elimina cookie-ul de autentificare. | Utilizator autentificat |
+| `GET` | `/auth/me` | Returneaza datele contului autentificat, inclusiv rolul, fara parola hash-uita sau tokenuri. | Utilizator autentificat |
 
-### 2.7.2. Tipuri de activități și activități efectuate
+### 2.7.2. Tipuri de activitati si activitati efectuate
 
-| Metodă | Endpoint | Descriere | Acces |
+| Metoda | Endpoint | Descriere | Acces |
 |---|---|---|---|
-| `GET` | `/activity-types` | Listează tipurile de activități definite de utilizator. | Utilizator autentificat |
-| `POST` | `/activity-types` | Creează un tip de activitate, cu denumire unică pentru utilizatorul curent. | Utilizator autentificat |
-| `PATCH` | `/activity-types/{id}` | Modifică denumirea unui tip de activitate propriu. | Utilizator autentificat |
-| `DELETE` | `/activity-types/{id}` | Solicită ștergerea unui tip de activitate, conform regulilor privind înregistrările și obiectivele asociate. | Utilizator autentificat |
-| `GET` | `/activities` | Listează activitățile proprii, cu paginare și filtre opționale după intervalul de date și tipul activității. | Utilizator autentificat |
-| `POST` | `/activities` | Înregistrează o activitate, validând tipul asociat, data, durata, distanța și intensitatea. | Utilizator autentificat |
-| `GET` | `/activities/{id}` | Returnează detaliile unei activități proprii. | Utilizator autentificat |
-| `PATCH` | `/activities/{id}` | Modifică datele unei activități proprii. | Utilizator autentificat |
-| `DELETE` | `/activities/{id}` | Șterge o activitate proprie; progresul și statisticile vor reflecta datele rămase. | Utilizator autentificat |
+| `GET` | `/activity-types` | Listeaza tipurile de activitati definite de utilizator. | Utilizator autentificat |
+| `POST` | `/activity-types` | Creeaza un tip de activitate, cu denumire unica pentru utilizatorul curent. | Utilizator autentificat |
+| `PATCH` | `/activity-types/{id}` | Modifica denumirea unui tip de activitate propriu. | Utilizator autentificat |
+| `DELETE` | `/activity-types/{id}` | Solicita stergerea unui tip de activitate, conform regulilor privind inregistrarile si obiectivele asociate. | Utilizator autentificat |
+| `GET` | `/activities` | Listeaza activitatile proprii, cu paginare si filtre optionale dupa intervalul de date si tipul activitatii. | Utilizator autentificat |
+| `POST` | `/activities` | Inregistreaza o activitate, validand tipul asociat, data, durata, distanta si intensitatea. | Utilizator autentificat |
+| `GET` | `/activities/{id}` | Returneaza detaliile unei activitati proprii. | Utilizator autentificat |
+| `PATCH` | `/activities/{id}` | Modifica datele unei activitati proprii. | Utilizator autentificat |
+| `DELETE` | `/activities/{id}` | Sterge o activitate proprie; progresul si statisticile vor reflecta datele ramase. | Utilizator autentificat |
 
-### 2.7.3. Obiceiuri și realizarea acestora
+### 2.7.3. Obiceiuri si realizarea acestora
 
-| Metodă | Endpoint | Descriere | Acces |
+| Metoda | Endpoint | Descriere | Acces |
 |---|---|---|---|
-| `GET` | `/habits` | Listează obiceiurile proprii și programarea lor, cu posibilitatea filtrării după starea de arhivare. | Utilizator autentificat |
-| `POST` | `/habits` | Creează un obicei și programarea acestuia; pentru `selected_days` primește cel puțin o zi a săptămânii. | Utilizator autentificat |
-| `GET` | `/habits/{id}` | Returnează detaliile unui obicei propriu și zilele programate. | Utilizator autentificat |
-| `PATCH` | `/habits/{id}` | Actualizează un obicei propriu, inclusiv starea `is_archived`; arhivarea păstrează istoricul realizărilor. | Utilizator autentificat |
-| `GET` | `/habits/{id}/completions` | Listează realizările unui obicei propriu pentru un interval de date. | Utilizator autentificat |
-| `PUT` | `/habits/{id}/completions/{date}` | Marchează obiceiul ca realizat în ziua indicată. Repetarea cererii nu creează înregistrări duplicate. | Utilizator autentificat |
-| `DELETE` | `/habits/{id}/completions/{date}` | Elimină bifarea realizării obiceiului pentru ziua indicată. | Utilizator autentificat |
+| `GET` | `/habits` | Listeaza obiceiurile proprii si programarea lor, cu posibilitatea filtrarii dupa starea de arhivare. | Utilizator autentificat |
+| `POST` | `/habits` | Creeaza un obicei si programarea acestuia; pentru `selected_days` primeste cel putin o zi a saptamanii. | Utilizator autentificat |
+| `GET` | `/habits/{id}` | Returneaza detaliile unui obicei propriu si zilele programate. | Utilizator autentificat |
+| `PATCH` | `/habits/{id}` | Actualizeaza un obicei propriu, inclusiv starea `is_archived`; arhivarea pastreaza istoricul realizarilor. | Utilizator autentificat |
+| `GET` | `/habits/{id}/completions` | Listeaza realizarile unui obicei propriu pentru un interval de date. | Utilizator autentificat |
+| `PUT` | `/habits/{id}/completions/{date}` | Marcheaza obiceiul ca realizat in ziua indicata. Repetarea cererii nu creeaza inregistrari duplicate. | Utilizator autentificat |
+| `DELETE` | `/habits/{id}/completions/{date}` | Elimina bifarea realizarii obiceiului pentru ziua indicata. | Utilizator autentificat |
 
-Parametrul `{date}` va utiliza formatul `YYYY-MM-DD`. Crearea obiceiului și salvarea zilelor programate se vor realiza în aceeași tranzacție.
+Parametrul `{date}` va utiliza formatul `YYYY-MM-DD`. Crearea obiceiului si salvarea zilelor programate se vor realiza in aceeasi tranzactie.
 
-### 2.7.4. Obiective și progres
+### 2.7.4. Obiective si progres
 
-| Metodă | Endpoint | Descriere | Acces |
+| Metoda | Endpoint | Descriere | Acces |
 |---|---|---|---|
-| `GET` | `/goals` | Listează obiectivele proprii, cu posibilitatea filtrării după starea activă. | Utilizator autentificat |
-| `POST` | `/goals` | Creează un obiectiv, validând ținta, unitatea, perioada și apartenența activității sau obiceiului asociat. | Utilizator autentificat |
-| `GET` | `/goals/{id}` | Returnează configurația unui obiectiv propriu. | Utilizator autentificat |
-| `PATCH` | `/goals/{id}` | Modifică un obiectiv propriu sau îl dezactivează prin `is_active`. | Utilizator autentificat |
-| `DELETE` | `/goals/{id}` | Șterge un obiectiv propriu, fără a șterge activitățile sau realizările obiceiului urmărit. | Utilizator autentificat |
-| `GET` | `/goals/{id}/progress` | Returnează intervalul evaluat, valoarea realizată, valoarea țintă și procentul de progres, calculate din activități sau realizările obiceiului. | Utilizator autentificat |
+| `GET` | `/goals` | Listeaza obiectivele proprii, cu posibilitatea filtrarii dupa starea activa. | Utilizator autentificat |
+| `POST` | `/goals` | Creeaza un obiectiv, validand tinta, unitatea, perioada si apartenenta activitatii sau obiceiului asociat. | Utilizator autentificat |
+| `GET` | `/goals/{id}` | Returneaza configuratia unui obiectiv propriu. | Utilizator autentificat |
+| `PATCH` | `/goals/{id}` | Modifica un obiectiv propriu sau il dezactiveaza prin `is_active`. | Utilizator autentificat |
+| `DELETE` | `/goals/{id}` | Sterge un obiectiv propriu, fara a sterge activitatile sau realizarile obiceiului urmarit. | Utilizator autentificat |
+| `GET` | `/goals/{id}/progress` | Returneaza intervalul evaluat, valoarea realizata, valoarea tinta si procentul de progres, calculate din activitati sau realizarile obiceiului. | Utilizator autentificat |
 
-### 2.7.5. Dashboard și statistici
+### 2.7.5. Dashboard si statistici
 
-| Metodă | Endpoint | Descriere | Acces |
+| Metoda | Endpoint | Descriere | Acces |
 |---|---|---|---|
-| `GET` | `/dashboard` | Returnează un rezumat cu activitățile recente, obiceiurile programate pentru ziua curentă și progresul obiectivelor active. | Utilizator autentificat |
-| `GET` | `/statistics` | Returnează numărul de activități, minutele active, distanța totală și numărul de realizări ale obiceiurilor, cu agregări pentru grafice. | Utilizator autentificat |
+| `GET` | `/dashboard` | Returneaza un rezumat cu activitatile recente, obiceiurile programate pentru ziua curenta si progresul obiectivelor active. | Utilizator autentificat |
+| `GET` | `/statistics` | Returneaza numarul de activitati, minutele active, distanta totala si numarul de realizari ale obiceiurilor, cu agregari pentru grafice. | Utilizator autentificat |
 
-Pentru statistici, parametrii propuși sunt `start_date`, `end_date`, `group_by` (`day`, `week`, `month`) și, opțional, `activity_type_id` pentru filtrarea indicatorilor de activitate.
+Pentru statistici, parametrii propusi sunt `start_date`, `end_date`, `group_by` (`day`, `week`, `month`) si, optional, `activity_type_id` pentru filtrarea indicatorilor de activitate.
 
-### 2.7.6. Import și export CSV
+### 2.7.6. Import si export CSV
 
-| Metodă | Endpoint | Descriere | Acces |
+| Metoda | Endpoint | Descriere | Acces |
 |---|---|---|---|
-| `POST` | `/activities/import` | Primește un fișier CSV prin `multipart/form-data`, validează rândurile și importă activități în contul curent. Returnează un rezultat al importului și eventualele erori de validare. | Utilizator autentificat |
-| `GET` | `/activities/export` | Returnează un fișier `text/csv` cu activitățile proprii, filtrate opțional după intervalul de date și tipul activității. | Utilizator autentificat |
+| `POST` | `/activities/import` | Primeste un fisier CSV prin `multipart/form-data`, valideaza randurile si importa activitati in contul curent. Returneaza un rezultat al importului si eventualele erori de validare. | Utilizator autentificat |
+| `GET` | `/activities/export` | Returneaza un fisier `text/csv` cu activitatile proprii, filtrate optional dupa intervalul de date si tipul activitatii. | Utilizator autentificat |
 
-Structura fișierului CSV și regulile pentru importuri parțiale sau duplicate vor fi stabilite înaintea implementării.
+Structura fisierului CSV si regulile pentru importuri partiale sau duplicate vor fi stabilite inaintea implementarii.
 
 ### 2.7.7. Administrarea conturilor
 
-| Metodă | Endpoint | Descriere | Acces |
+| Metoda | Endpoint | Descriere | Acces |
 |---|---|---|---|
-| `GET` | `/admin/users` | Listează conturile cu paginare și filtre după starea activă sau verificarea emailului, fără hash-uri de parole ori tokenuri. | Administrator |
-| `PATCH` | `/admin/users/{id}` | Activează sau dezactivează un cont prin modificarea câmpului `is_active`. Un cont dezactivat nu mai poate accesa resursele protejate. | Administrator |
+| `GET` | `/admin/users` | Listeaza conturile cu paginare si filtre dupa starea activa sau verificarea emailului, fara hash-uri de parole ori tokenuri. | Administrator |
+| `PATCH` | `/admin/users/{id}` | Activeaza sau dezactiveaza un cont prin modificarea campului `is_active`. Un cont dezactivat nu mai poate accesa resursele protejate. | Administrator |
 
-### 2.7.8. Articole și interese
+### 2.7.8. Articole si interese
 
-| Metodă | Endpoint | Descriere | Acces |
+| Metoda | Endpoint | Descriere | Acces |
 |---|---|---|---|
-| `PATCH` | `/auth/me/interests` | Înlocuiește lista de interese a utilizatorului curent cu temele validate din cerere. O listă goală elimină preferințele selectate. | Utilizator autentificat |
-| `GET` | `/articles` | Listează catalogul de articole cu paginare și un filtru opțional după `topic`. | Utilizator autentificat |
-| `GET` | `/articles/recommended` | Returnează cu paginare articolele potrivite intereselor utilizatorului sau selecția generală, indicând dacă rezultatele sunt personalizate. | Utilizator autentificat |
-| `GET` | `/articles/{id}` | Returnează detaliile unui articol din catalogul comun, inclusiv conținutul disponibil și linkul sursei. | Utilizator autentificat |
+| `PATCH` | `/auth/me/interests` | Inlocuieste lista de interese a utilizatorului curent cu temele validate din cerere. O lista goala elimina preferintele selectate. | Utilizator autentificat |
+| `GET` | `/articles` | Listeaza catalogul de articole cu paginare si un filtru optional dupa `topic`. | Utilizator autentificat |
+| `GET` | `/articles/recommended` | Returneaza cu paginare articolele potrivite intereselor utilizatorului sau selectia generala, indicand daca rezultatele sunt personalizate. | Utilizator autentificat |
+| `GET` | `/articles/{id}` | Returneaza detaliile unui articol din catalogul comun, inclusiv continutul disponibil si linkul sursei. | Utilizator autentificat |
 
-Catalogul de articole este comun utilizatorilor autentificați; restricția privind accesul exclusiv la datele proprii se aplică listei personale de interese.
+Catalogul de articole este comun utilizatorilor autentificati; restrictia privind accesul exclusiv la datele proprii se aplica listei personale de interese.
 
-Endpoint-urile reprezintă o propunere preliminară. Regulile încă deschise privind ștergerile, perioadele obiectivelor și modificarea obiceiurilor vor fi clarificate înaintea implementării.
+Endpoint-urile reprezinta o propunere preliminara. Regulile inca deschise privind stergerile, perioadele obiectivelor si modificarea obiceiurilor vor fi clarificate inaintea implementarii.
 
 ## 2.8. Aspecte de clarificat
 
-Înainte de implementarea efectivă în PostgreSQL, trebuie stabilite următoarele:
+Inainte de implementarea efectiva in PostgreSQL, trebuie stabilite urmatoarele:
 
-1. **Obiective recurente:** modul de calcul pentru obiective zilnice, săptămânale, lunare și cu perioadă personalizată.
-2. **Monitorizarea pașilor:** modelul actual nu permite stocarea numerică a pașilor.
-3. **Ștergerea datelor:** reguli pentru ștergerea activităților, obiceiurilor, obiectivelor și sesiunilor.
-4. **Integritatea datelor:** verificarea apartenenței activităților, obiceiurilor și obiectivelor la utilizator.
-5. **Verificarea emailului:** alegerea serviciului SMTP/API, durata de valabilitate a tokenurilor și limitarea retrimiterilor.
-6. **Gestionarea sesiunilor:** durata sesiunilor, expirarea și invalidarea acestora la dezactivarea conturilor.
-7. **Modificarea emailului:** stabilirea procesului de reverificare atunci când utilizatorul își schimbă adresa.
-8. **Validarea obiectivelor:** definirea combinațiilor permise între tipurile de obiective, unitățile de măsură și perioade.
+1. **Obiective recurente:** modul de calcul pentru obiective zilnice, saptamanale, lunare si cu perioada personalizata.
+2. **Monitorizarea pasilor:** modelul actual nu permite stocarea numerica a pasilor.
+3. **Stergerea datelor:** reguli pentru stergerea activitatilor, obiceiurilor, obiectivelor si sesiunilor.
+4. **Integritatea datelor:** verificarea apartenentei activitatilor, obiceiurilor si obiectivelor la utilizator.
+5. **Verificarea emailului:** alegerea serviciului SMTP/API, durata de valabilitate a tokenurilor si limitarea retrimiterilor.
+6. **Gestionarea sesiunilor:** durata sesiunilor, expirarea si invalidarea acestora la dezactivarea conturilor.
+7. **Modificarea emailului:** stabilirea procesului de reverificare atunci cand utilizatorul isi schimba adresa.
+8. **Validarea obiectivelor:** definirea combinatiilor permise intre tipurile de obiective, unitatile de masura si perioade.
 
-**Notă:** Acesta este modelul preliminar al bazei de date, versiunea 4. Constrângerile de apartenență pot fi implementate prin chei externe compuse și verificări suplimentare în backend.
+**Nota:** Acesta este modelul preliminar al bazei de date, versiunea 4. Constrangerile de apartenenta pot fi implementate prin chei externe compuse si verificari suplimentare in backend.
