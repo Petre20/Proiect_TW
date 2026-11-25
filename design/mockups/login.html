@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0F3D2E"><title>Log in · WellTrack</title>
+<link rel="stylesheet" href="styles.css"><style>
+.auth{min-height:100dvh;display:grid;grid-template-rows:auto 1fr}
+.hero{background:var(--ink);color:var(--mist);padding:1.2rem 1.2rem 5.2rem;border-radius:0 0 34px 34px;display:grid;gap:.9rem;align-content:start}
+.hero h1{font-size:2.5rem;margin-top:1rem}.hero p{color:#C3D9CC;max-width:34ch}
+.hero .track{margin-top:.8rem}.hero .hurdle{height:64px}.hero .hurdle i{width:38px;height:38px;font-size:.9rem}
+.formside{padding:0 1rem 2rem;margin-top:-3.4rem}
+.fcard{background:#fff;border:2px solid var(--line);border-radius:var(--r-lg);padding:1.3rem 1.2rem;max-width:480px;margin:0 auto;box-shadow:0 18px 30px -18px rgba(15,61,46,.45)}
+.rail,.topbar{display:none!important}.app{display:block!important;padding:0!important}
+@media(min-width:900px){.auth{grid-template-columns:1.05fr 1fr;grid-template-rows:none}.hero{border-radius:0;padding:3rem 3.4rem;align-content:center}.hero h1{font-size:4rem}
+.hero .hurdle{height:92px}.hero .hurdle i{width:54px;height:54px}.formside{margin:0;display:grid;place-items:center;padding:2rem}.fcard{box-shadow:none;padding:2rem}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="home" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></symbol>
+<symbol id="habit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+<symbol id="goal" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+<symbol id="stats" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+<symbol id="learn" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+<symbol id="transfer" viewBox="0 0 24 24"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></symbol>
+<symbol id="flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+<symbol id="minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
+<symbol id="user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+<symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+<symbol id="chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+<symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+<symbol id="logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+<symbol id="trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol>
+</defs></svg>
+<div class="app">
+<aside class="rail" aria-label="Sidebar"><a class="brand" href="dashboard.html"><svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="10" fill="#D8F45A"/><path d="M9 24V11M23 24V11M7 12.5h18M7 18.5h18" stroke="#0F3D2E" stroke-width="3" stroke-linecap="round"/></svg>WellTrack</a><a class="nav" href="dashboard.html"><svg class="i" aria-hidden="true"><use href="#home"/></svg>Dashboard</a><a class="nav" href="activities.html"><svg class="i" aria-hidden="true"><use href="#activity"/></svg>Activities</a><a class="nav" href="habits.html"><svg class="i" aria-hidden="true"><use href="#habit"/></svg>Habits</a><a class="nav" href="goals.html"><svg class="i" aria-hidden="true"><use href="#goal"/></svg>Goals</a><a class="nav" href="statistics.html"><svg class="i" aria-hidden="true"><use href="#stats"/></svg>Statistics</a><a class="nav" href="learn.html"><svg class="i" aria-hidden="true"><use href="#learn"/></svg>Learn</a><a class="nav" href="import.html"><svg class="i" aria-hidden="true"><use href="#transfer"/></svg>Import / Export</a>
+<a class="me" href="profile.html"><span class="avatar" aria-hidden="true">AP</span>Ana Popescu</a></aside>
+<div class="main">
+<header class="topbar"><a class="brand" href="dashboard.html"><svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="10" fill="#D8F45A"/><path d="M9 24V11M23 24V11M7 12.5h18M7 18.5h18" stroke="#0F3D2E" stroke-width="3" stroke-linecap="round"/></svg>WellTrack</a><a class="avatar" href="more.html" aria-label="Ana Popescu, account">AP</a></header>
+<main class="auth" id="main">
+<section class="hero on-ink"><a class="brand" href="login.html" style="color:var(--mist)"><svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="10" fill="#D8F45A"/><path d="M9 24V11M23 24V11M7 12.5h18M7 18.5h18" stroke="#0F3D2E" stroke-width="3" stroke-linecap="round"/></svg>WellTrack</a>
+<h1>Clear the week.</h1><p>Log a workout in seconds, tick off today's habits, and watch your goals move.</p>
+<div class="track" style="--n:6"><div class="hurdle c"><i>1</i></div><div class="hurdle c"><i>2</i></div><div class="hurdle c"><i>3</i></div><div class="hurdle c"><i>4</i></div><div class="hurdle n"><i>5</i></div><div class="hurdle n"><i>6</i></div></div></section>
+<section class="formside"><div class="fcard"><h2>Welcome back</h2><p class="muted" style="margin-bottom:1.1rem">Log in to pick up where you left off.</p>
+<form onsubmit="return false"><div class="field"><label for="em">Email</label><input class="input" id="em" type="email" autocomplete="email" value="ana.popescu@student.ro"></div>
+<div class="field"><label for="pw">Password</label><div style="position:relative"><input class="input" id="pw" type="password" autocomplete="current-password" value="correcthorse" style="padding-right:5.2rem"><button type="button" class="btn ghost" style="position:absolute;right:.2rem;top:4px;min-height:44px;padding:0 .8rem" aria-label="Show password"><svg class="i" aria-hidden="true"><use href="#eye"/></svg></button></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin:-.2rem 0 1.2rem;gap:1rem"><label style="display:flex;gap:.6rem;align-items:center;font-weight:600"><input type="checkbox" checked style="width:22px;height:22px"> Keep me logged in</label><a class="link small" href="#">Forgot password?</a></div>
+<button class="btn block">Log in</button></form>
+<div style="display:flex;align-items:center;gap:.8rem;margin:1.4rem 0;color:var(--muted);font-weight:600"><hr style="flex:1;border:0;border-top:2px solid var(--line)">or<hr style="flex:1;border:0;border-top:2px solid var(--line)"></div>
+<button class="btn line block" type="button"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.4-1 7.2-2.7l-3.5-2.7c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.2v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.2a6.6 6.6 0 0 1 0-4.3V7.1H2.2a11 11 0 0 0 0 9.9z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1A11 11 0 0 0 2.2 7.1l3.6 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Continue with Google</button>
+<p style="text-align:center;margin-top:1.4rem" class="muted">New to WellTrack? <a class="link" style="color:var(--ink)" href="onboarding.html">Create an account</a></p></div></section></main>
+</div></div>
+<script src="app.js"></script></body></html>
