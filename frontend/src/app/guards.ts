@@ -1,5 +1,5 @@
 import { redirect } from 'react-router'
-import { meQuery } from '@/features/auth/api'
+import { meQuery } from '@/features/auth/queries'
 import { queryClient } from './query-client'
 
 const bypass = import.meta.env.VITE_DEV_BYPASS_AUTH === 'true'

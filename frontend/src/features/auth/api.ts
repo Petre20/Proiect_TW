@@ -1,24 +1,12 @@
-import { queryOptions } from '@tanstack/react-query'
-import { api, ApiError } from '@/lib/api'
+import { http } from '@/lib/http'
+import type { LoginInput, Message, RegisterInput, User } from './types'
 
-export type User = {
-  id: number
-  email: string
-  name: string
-  role: 'user' | 'admin'
-  interests: string[]
+export const authApi = {
+  me: (signal?: AbortSignal) => http.get<User>('/auth/me', { signal }).then((r) => r.data),
+  login: (input: LoginInput) => http.post<User>('/auth/login', input).then((r) => r.data),
+  logout: () => http.post<void>('/auth/logout').then(() => undefined),
+  register: (input: RegisterInput) => http.post<Message>('/auth/register', input).then((r) => r.data),
+  verifyEmail: (token: string) => http.post<Message>('/auth/verify-email', { token }).then((r) => r.data),
+  resendVerification: (email: string) =>
+    http.post<Message>('/auth/resend-verification', { email }).then((r) => r.data),
 }
-
-export const meQuery = queryOptions({
-  queryKey: ['me'],
-  queryFn: async (): Promise<User | null> => {
-    try {
-      return await api<User>('/auth/me')
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 401) return null
-      throw e
-    }
-  },
-  staleTime: 60_000,
-  retry: false,
-})
