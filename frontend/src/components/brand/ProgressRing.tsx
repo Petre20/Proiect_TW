@@ -1,6 +1,5 @@
 type Props = { value: number; size?: number; stroke?: number; label?: string; className?: string }
 
-/** Circular progress. Colour comes from tokens; the arc animates unless the user prefers reduced motion. */
 export function ProgressRing({ value, size = 120, stroke = 12, label, className = '' }: Props) {
   const v = Math.max(0, Math.min(100, value))
   const r = (size - stroke) / 2

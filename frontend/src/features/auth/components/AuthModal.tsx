@@ -8,7 +8,6 @@ const COPY = {
   'session-expired': { title: 'Your session ended', body: 'Log in again and carry on. Nothing you typed is lost.' },
 } as const
 
-/** Mounted once in RootLayout. Opened from anywhere with useAuthModal().show('login'). */
 export function AuthModal() {
   const { open, mode, close } = useAuthModal()
   const copy = COPY[mode]

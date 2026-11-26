@@ -2,10 +2,6 @@ import { createBrowserRouter } from 'react-router'
 import { requireAdmin, requireAuth, requireGuest } from './guards'
 import { AppLayout, AuthLayout, RootLayout } from './layouts'
 
-/**
- * The whole page map in one place. Every page is lazy-loaded and exports `Component`.
- * Loaders are used only as guards; data fetching belongs to TanStack Query.
- */
 export const router = createBrowserRouter([
   {
     Component: RootLayout,
@@ -13,7 +9,6 @@ export const router = createBrowserRouter([
       { index: true, lazy: () => import('@/features/landing/LandingPage') },
       { path: 'styleguide', lazy: () => import('@/features/styleguide/StyleguidePage') },
 
-      // public auth pages (the same forms also open in a modal from anywhere)
       {
         Component: AuthLayout,
         loader: requireGuest,
@@ -22,7 +17,6 @@ export const router = createBrowserRouter([
           { path: 'register', lazy: () => import('@/features/auth/RegisterPage') },
         ],
       },
-      // reached from the email link, whether or not a session exists
       { Component: AuthLayout, children: [{ path: 'verify-email', lazy: () => import('@/features/auth/VerifyEmailPage') }] },
 
       { path: 'onboarding', loader: requireAuth, lazy: () => import('@/features/onboarding/OnboardingPage') },

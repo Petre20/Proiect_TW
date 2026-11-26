@@ -9,7 +9,6 @@ export type User = {
   interests: string[]
 }
 
-/** App boot calls /auth/me. 401 means "logged out", which is a normal answer, not an error. */
 export const meQuery = queryOptions({
   queryKey: ['me'],
   queryFn: async (): Promise<User | null> => {

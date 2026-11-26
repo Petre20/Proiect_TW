@@ -1,34 +1,29 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Tokens come from design/mockups/globals.css (sections 2 and 5). Keep both in sync until the mockups are retired. */
-
 @font-face{font-family:"Unbounded";font-style:normal;font-weight:200 900;font-display:swap;src:url("../assets/fonts/unbounded-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215}
 @font-face{font-family:"Unbounded";font-style:normal;font-weight:200 900;font-display:swap;src:url("../assets/fonts/unbounded-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F}
 @font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url("../assets/fonts/figtree-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215}
 @font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url("../assets/fonts/figtree-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F}
 
-/* ================= 2. TOKENS ================= */
 :root{
-  /* ---- brand: identical in light and dark ---- */
   --brand-ink:#0F3D2E;  --brand-ink-2:#15523D;  --brand-ink-3:#1D6A4E;  --brand-ink-edge:#06241A;
-  --on-brand:#F7F5EF;   --on-brand-muted:#C3D9CC;     /* text on dark green surfaces (rail, lane, hero) */
-  --volt:#D8F45A;       --volt-edge:#97B424;          /* primary action, "pick me" */
-  --go:#15803D;         --go-edge:#0B5A29;            /* done, success, progress */
-  --ember:#FF9A4D;      --ember-edge:#C26A1F;  --ember-foreground:#2B1503;  /* warm highlight, NEVER on a clickable control */
-  --sun:#FFC23D;        --sun-edge:#C48F00;    --sun-foreground:#4A3300;    /* warnings, "moderate" */
+  --on-brand:#F7F5EF;   --on-brand-muted:#C3D9CC;
+  --volt:#D8F45A;       --volt-edge:#97B424;
+  --go:#15803D;         --go-edge:#0B5A29;
+  --ember:#FF9A4D;      --ember-edge:#C26A1F;  --ember-foreground:#2B1503;
+  --sun:#FFC23D;        --sun-edge:#C48F00;    --sun-foreground:#4A3300;
 
-  /* ---- semantic: flip in dark ---- */
   --background:#F7F5EF;  --foreground:#0F3D2E;
   --card:#FFFFFF;        --card-foreground:#0F3D2E;
-  --muted:#EFEBE1;       --muted-foreground:#66655E;  /* muted = subtle fill, muted-foreground = secondary text */
+  --muted:#EFEBE1;       --muted-foreground:#66655E;
   --border:#E6E1D6;      --input:#E6E1D6;      --ring:#0F3D2E;
-  --control:#FFFFFF;     /* fill of keycap controls: ticks, outline buttons, pills */
-  --field:#FFFFFF;       /* fill of text inputs */
-  --control-edge:#CFC8B8;  /* bottom edge of keycap controls */
-  --go-text:#15803D;     /* green text on a card */
-  --warm-soft:#FFEFDC;   --warm-soft-text:#6B3A0A; --warm-soft-strong:#2B1503;  /* gentle amber panel: welcome back, comeback */
-  --glow:rgba(255,154,77,.14);                       /* soft warm light in the page corner */
+  --control:#FFFFFF;
+  --field:#FFFFFF;
+  --control-edge:#CFC8B8;
+  --go-text:#15803D;
+  --warm-soft:#FFEFDC;   --warm-soft-text:#6B3A0A; --warm-soft-strong:#2B1503;
+  --glow:rgba(255,154,77,.14);
   --primary:var(--volt); --primary-foreground:#0F3D2E;
   /* shadcn expects these too; they alias ours. Keep .dark on <html> so the aliases follow the dark values. */
   --popover:var(--card); --popover-foreground:var(--card-foreground);
@@ -40,7 +35,6 @@
   --sidebar-accent:var(--brand-ink-2); --sidebar-accent-foreground:var(--on-brand);
   --destructive:#C42B33; --destructive-soft:#FDE8E8; --destructive-text:#7A1A1F; --destructive-edge:#E7B9BB; --destructive-line:#F3C9CB;
 
-  /* ---- shape ---- */
   --radius:14px; --r-sm:12px; --r-md:18px; --r-lg:26px;
 }
 
@@ -63,7 +57,6 @@
 @custom-variant dark (&:is(.dark, .dark *));
 
 @theme inline{
-  /* shadcn semantic colours */
   --color-background:var(--background);        --color-foreground:var(--foreground);
   --color-card:var(--card);                    --color-card-foreground:var(--card-foreground);
   --color-popover:var(--popover);              --color-popover-foreground:var(--popover-foreground);
@@ -77,8 +70,6 @@
   --color-sidebar-border:var(--sidebar-border);--color-sidebar-ring:var(--sidebar-ring);
   --color-sidebar-primary:var(--sidebar-primary);--color-sidebar-primary-foreground:var(--sidebar-primary-foreground);
   --color-sidebar-accent:var(--sidebar-accent);--color-sidebar-accent-foreground:var(--sidebar-accent-foreground);
-
-  /* WellTrack brand and control colours */
   --color-brand-ink:var(--brand-ink);          --color-brand-ink-2:var(--brand-ink-2);   --color-brand-ink-3:var(--brand-ink-3);
   --color-on-brand:var(--on-brand);            --color-on-brand-muted:var(--on-brand-muted);
   --color-volt:var(--volt);                    --color-volt-edge:var(--volt-edge);
@@ -88,14 +79,9 @@
   --color-control:var(--control);              --color-control-edge:var(--control-edge); --color-field:var(--field);
   --color-warm-soft:var(--warm-soft);          --color-warm-soft-text:var(--warm-soft-text); --color-warm-soft-strong:var(--warm-soft-strong);
   --color-destructive-soft:var(--destructive-soft); --color-destructive-text:var(--destructive-text);
-
-  /* shape and type */
   --radius-sm:var(--r-sm);  --radius-md:var(--r-md);  --radius-lg:var(--r-lg);  --radius-xl:calc(var(--r-lg) + 8px);
   --font-sans:var(--font-ui);  --font-display:var(--font-display);
 }
-
-/* Keycap press effect. Set --fill / --edge / --fg on the element (a shadcn Button variant does this), e.g.
-   default: [--fill:var(--volt)] [--edge:var(--volt-edge)] [--fg:var(--brand-ink)]    outline: --control / --control-edge / --foreground */
 @utility keycap{
   background:var(--fill); color:var(--fg);
   box-shadow:0 5px 0 var(--edge);

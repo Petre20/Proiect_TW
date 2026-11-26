@@ -4,7 +4,6 @@ import { ThemeToggle } from '@/components/brand/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { useAuthModal } from '@/stores/auth-modal'
 
-/** Skeleton. The real page is a port of design/mockups/landing.html (hero demo, habit cards, comeback, steps). */
 export function Component() {
   const show = useAuthModal((s) => s.show)
   return (

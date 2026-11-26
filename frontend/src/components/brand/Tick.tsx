@@ -2,7 +2,6 @@ import { Check } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
 
-/** The habit toggle. Raised key when off, green and pressed when done. */
 export function Tick({ className, ...props }: Omit<ComponentProps<'button'>, 'type'> & { 'aria-pressed': boolean }) {
   return (
     <button

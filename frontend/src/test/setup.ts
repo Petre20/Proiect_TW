@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom/vitest'
 
-// jsdom lacks these browser APIs; next-themes and Radix use them.
 window.matchMedia ??= ((query: string) => ({
   matches: false,
   media: query,

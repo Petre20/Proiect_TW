@@ -5,7 +5,6 @@ import { ThemeToggle } from '@/components/brand/ThemeToggle'
 import { AuthModal } from '@/features/auth/components/AuthModal'
 import { cn } from '@/lib/utils'
 
-/** Wraps every route: global overlays live here so they have router context. */
 export function RootLayout() {
   return (
     <>
@@ -32,7 +31,7 @@ const ADMIN = [
 const TABS = [
   { to: '/dashboard', label: 'Home', icon: LayoutDashboard },
   { to: '/habits', label: 'Habits', icon: ListChecks },
-  null, // centre: log activity
+  null,
   { to: '/goals', label: 'Goals', icon: Goal },
   { to: '/more', label: 'More', icon: MoreHorizontal },
 ]
@@ -43,7 +42,6 @@ const railLink = ({ isActive }: { isActive: boolean }) =>
     isActive && 'bg-volt text-brand-ink shadow-[0_4px_0_var(--volt-edge)] hover:bg-volt',
   )
 
-/** Desktop: persistent rail. Mobile: bottom tabs. Same routes either way. */
 export function AppLayout() {
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[248px_1fr]">
@@ -96,7 +94,6 @@ export function AppLayout() {
   )
 }
 
-/** Centred card for /login, /register. The forms inside are shared with the auth modal. */
 export function AuthLayout() {
   return (
     <div className="grid min-h-dvh place-items-center p-4">

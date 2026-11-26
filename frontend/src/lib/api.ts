@@ -1,9 +1,3 @@
-/**
- * Fetch wrapper for the FastAPI backend.
- * - same-origin in dev (Vite proxies /api), so the HttpOnly session cookie just works
- * - every mutating request needs `X-Requested-With: WellTrack` or the backend answers 403
- * - backend error messages (`detail`) are Romanian and are surfaced as-is
- */
 export class ApiError extends Error {
   status: number
   constructor(status: number, message: string) {
@@ -17,6 +11,7 @@ const MUTATING = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
 export async function api<T>(path: string, init: RequestInit & { json?: unknown } = {}): Promise<T> {
   const method = (init.method ?? 'GET').toUpperCase()
   const headers = new Headers(init.headers)
+  // the backend answers 403 to mutating requests without this header
   if (MUTATING.has(method)) headers.set('X-Requested-With', 'WellTrack')
   let body = init.body
   if (init.json !== undefined) {
@@ -25,14 +20,8 @@ export async function api<T>(path: string, init: RequestInit & { json?: unknown 
   }
   const res = await fetch(`/api${path}`, { ...init, method, headers, body, credentials: 'include' })
   if (!res.ok) {
-    let message = res.statusText
-    try {
-      const data = await res.json()
-      message = typeof data.detail === 'string' ? data.detail : message
-    } catch {
-      /* body was not JSON */
-    }
-    throw new ApiError(res.status, message)
+    const data = await res.json().catch(() => null)
+    throw new ApiError(res.status, typeof data?.detail === 'string' ? data.detail : res.statusText)
   }
   return res.status === 204 ? (undefined as T) : ((await res.json()) as T)
 }

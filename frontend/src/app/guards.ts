@@ -2,7 +2,6 @@ import { redirect } from 'react-router'
 import { meQuery } from '@/features/auth/api'
 import { queryClient } from './query-client'
 
-/** Dev only: skip login checks so the shell can be explored without the backend running. */
 const bypass = import.meta.env.VITE_DEV_BYPASS_AUTH === 'true'
 
 export async function requireAuth({ request }: { request: Request }) {
@@ -12,7 +11,7 @@ export async function requireAuth({ request }: { request: Request }) {
     const url = new URL(request.url)
     throw redirect(`/login?next=${encodeURIComponent(url.pathname + url.search)}`)
   }
-  // TODO(F1.5): if onboarding is not finished, redirect to /onboarding (needs the backend flag).
+  // TODO: redirect to /onboarding when onboarding is unfinished (needs a backend flag)
   return null
 }
 

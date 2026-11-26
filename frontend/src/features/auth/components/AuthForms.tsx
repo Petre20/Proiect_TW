@@ -1,11 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { useAuthModal } from '@/stores/auth-modal'
 
-/**
- * F1 fills these in (react-hook-form + zod, labelled fields, textual errors).
- * The same two components are rendered by the /login and /register pages (variant="page")
- * and by AuthModal (variant="modal"), so there is only one form to maintain.
- */
 type Props = { variant: 'page' | 'modal' }
 
 export function LoginForm({ variant }: Props) {
