@@ -13,7 +13,7 @@ export function LandingHeader() {
   return (
     <nav aria-label="Site" className="mx-auto flex max-w-page items-center justify-between px-gutter py-4">
       <Link to="/" aria-label="WellTrack home" className="shrink-0">
-        <Logo onDark className="text-on-brand" />
+        <Logo onDark className="text-on-brand" wordmarkClassName="max-[360px]:sr-only" />
       </Link>
       <div className="flex items-center gap-1 sm:gap-2">
         <ThemeToggle className="text-on-brand hover:bg-brand-ink-2 max-[420px]:hidden" />
