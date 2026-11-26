@@ -11,7 +11,7 @@ export function LandingHeader() {
   const { data: me, isPending } = useQuery(meQuery)
 
   return (
-    <nav aria-label="Site" className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 lg:px-8">
+    <nav aria-label="Site" className="mx-auto flex max-w-page items-center justify-between px-gutter py-4">
       <Link to="/" aria-label="WellTrack home" className="shrink-0">
         <Logo onDark className="text-on-brand" />
       </Link>

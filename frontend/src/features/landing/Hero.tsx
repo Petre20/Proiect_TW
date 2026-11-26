@@ -36,7 +36,7 @@ function TodayCard() {
           <path d="m21 17 7 4 3-8" />
         </svg>
       </p>
-      <div className="rounded-[26px] border-2 border-border bg-card p-4 shadow-[0_8px_0_rgb(6_36_26/0.45),0_26px_36px_-14px_rgb(0_0_0/0.5)]">
+      <div className="rounded-lg border-2 border-border bg-card p-4 shadow-[0_8px_0_rgb(6_36_26/0.45),0_26px_36px_-14px_rgb(0_0_0/0.5)]">
         <h2 className="mb-1 text-lg">Today, Thursday</h2>
         {HABITS.map((habit, i) => (
           <div key={habit.name} className="flex min-h-[68px] items-center gap-3.5 border-t-2 border-muted py-2.5 first-of-type:border-t-0">
@@ -67,11 +67,11 @@ function TodayCard() {
               style={{ width: `${percent}%` }}
             />
           </div>
-          <b className="num font-display text-[0.9375rem] font-extrabold whitespace-nowrap">
+          <b className="num font-display text-label font-extrabold whitespace-nowrap">
             {done} of {HABITS.length}
           </b>
         </div>
-        <p aria-live="polite" className="mt-2 min-h-6 text-[0.9375rem] font-bold text-go-text">
+        <p aria-live="polite" className="mt-2 min-h-6 text-label font-bold text-go-text">
           {message(done)}
         </p>
         <WeekStrip days={week} />
@@ -84,15 +84,15 @@ export function Hero() {
   return (
     <header className="relative overflow-hidden rounded-b-[38px] bg-brand-ink pb-14 text-on-brand lg:rounded-b-[54px] lg:pb-[4.6rem] dark:border-b dark:border-white/10">
       <LandingHeader />
-      <div className="mx-auto mt-6 grid max-w-6xl gap-10 px-4 lg:mt-10 lg:grid-cols-[1.12fr_1fr] lg:items-center lg:gap-14 lg:px-8">
+      <div className="mx-auto mt-6 grid max-w-page gap-10 px-gutter lg:mt-10 lg:grid-cols-[1.12fr_1fr] lg:items-center lg:gap-14">
         <div>
-          <h1 className="text-[clamp(2.7rem,10.5vw,5.1rem)] tracking-[-0.035em]">
+          <h1 className="text-display">
             Build habits that{' '}
             <mark className="relative bg-transparent whitespace-nowrap text-volt after:absolute after:inset-x-[-2%] after:-bottom-[0.08em] after:h-[0.14em] after:-rotate-[1.2deg] after:rounded-[9px] after:bg-volt after:opacity-90">
               stick.
             </mark>
           </h1>
-          <p className="mt-4 max-w-[36ch] text-lg text-on-brand-muted lg:text-xl">
+          <p className="mt-4 max-w-[36ch] text-lede text-on-brand-muted">
             Tick off today, log a workout in seconds, and watch your week add up. Habits, activities and goals in one
             place.
           </p>

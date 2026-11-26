@@ -32,6 +32,22 @@ const SWATCHES: [string, string][] = [
   ['destructive', 'bg-destructive'], ['control', 'bg-control'], ['warm-soft', 'bg-warm-soft'],
 ]
 
+const TYPE_TOKENS: [string, string, string][] = [
+  ['text-display', 'text-display', 'Hero headline. Fluid, 2.7 to 5.1 rem.'],
+  ['text-title', 'text-title', 'Section headings. Fluid, 1.7 to 2.7 rem.'],
+  ['text-lede', 'text-lede', 'Intro paragraph under a headline. Fluid, 1.125 to 1.25 rem.'],
+  ['text-label', 'text-label', 'Labels, small buttons, form text. 15 px.'],
+  ['text-caption', 'text-caption', 'Chips and fine print. 13 px.'],
+]
+
+const LAYOUT_TOKENS: [string, string][] = [
+  ['max-w-page', 'Page container, 72 rem.'],
+  ['max-w-form', 'Auth and form card, 30 rem.'],
+  ['px-gutter', 'Page side padding: 16 px, 32 px from the lg breakpoint.'],
+  ['py-section', 'Vertical space of a page section: 56 px, 88 px from the lg breakpoint.'],
+  ['rounded-field', 'Radius of inputs and small tiles, 14 px. Cards use rounded-lg.'],
+]
+
 const HABITS = ['Morning run', 'Read 10 pages', 'Cook a proper meal']
 
 export function Component() {
@@ -60,6 +76,22 @@ export function Component() {
             </div>
           ))}
         </div>
+      </Section>
+
+      <Section title="Type, layout and radii" note="Use these instead of one-off sizes. Spacing between elements stays on Tailwind's own scale (gap-2, gap-4, p-6).">
+        <ul className="grid gap-3">
+          {TYPE_TOKENS.map(([token, cls, note]) => (
+            <li key={token} className="grid gap-0.5">
+              <span className={`${cls} font-display font-extrabold`}>Build habits</span>
+              <span className="text-sm text-muted-foreground"><code>{token}</code>. {note}</span>
+            </li>
+          ))}
+        </ul>
+        <ul className="grid gap-1.5 text-sm text-muted-foreground">
+          {LAYOUT_TOKENS.map(([token, note]) => (
+            <li key={token}><code>{token}</code>. {note}</li>
+          ))}
+        </ul>
       </Section>
 
       <Section title="Buttons" note="Keycaps. They lift on hover and press down on click. Destructive stays neutral until hovered, so it never reads as the main action.">
