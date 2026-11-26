@@ -18,10 +18,11 @@ function renderRegister(variant: 'page' | 'modal' = 'page', onSent?: () => void)
   )
 }
 
-async function fill(name = 'Ana', email = 'ana@mail.ro', password = 'correcthorse') {
+async function fill(name = 'Ana', email = 'ana@mail.ro', password = 'correcthorse', confirm = password) {
   if (name) await userEvent.type(screen.getByLabelText('Name'), name)
   await userEvent.type(screen.getByLabelText('Email'), email)
   await userEvent.type(screen.getByLabelText('Password'), password)
+  await userEvent.type(screen.getByLabelText('Confirm password'), confirm)
 }
 
 const submit = () => userEvent.click(screen.getByRole('button', { name: 'Create account' }))
@@ -47,6 +48,17 @@ describe('RegisterForm', () => {
     await fill('Ana', 'ana@mail.ro', '1234567')
     await submit()
     expect(await screen.findByText('Use at least 8 characters.', { selector: '[role=alert]' })).toBeInTheDocument()
+    expect(calls).toBe(0)
+  })
+
+  it('does not send when the confirmation differs', async () => {
+    let calls = 0
+    server.use(http.post('*/api/auth/register', () => { calls++; return HttpResponse.json({ message: 'ok' }, { status: 201 }) }))
+    renderRegister()
+    await fill('Ana', 'ana@mail.ro', 'correcthorse', 'correcthorsf')
+    await submit()
+    expect(await screen.findByText('Passwords do not match.')).toBeInTheDocument()
+    expect(screen.getByLabelText('Confirm password')).toHaveAttribute('aria-invalid', 'true')
     expect(calls).toBe(0)
   })
 

@@ -1,6 +1,6 @@
 import { loginSchema, registerSchema } from './schemas'
 
-const valid = { name: 'Ana', email: 'ana@mail.ro', password: 'correcthorse' }
+const valid = { name: 'Ana', email: 'ana@mail.ro', password: 'correcthorse', confirmPassword: 'correcthorse' }
 
 function firstMessage(result: ReturnType<typeof registerSchema.safeParse>, field: string) {
   if (result.success) return undefined
@@ -41,7 +41,21 @@ describe('registerSchema', () => {
     expect(firstMessage(registerSchema.safeParse({ ...valid, password: 'a'.repeat(129) }), 'password')).toBe(
       'Use at most 128 characters.',
     )
-    expect(registerSchema.safeParse({ ...valid, password: 'a'.repeat(128) }).success).toBe(true)
+    const max = 'a'.repeat(128)
+    expect(registerSchema.safeParse({ ...valid, password: max, confirmPassword: max }).success).toBe(true)
+  })
+})
+
+describe('registerSchema password confirmation', () => {
+  it('rejects a confirmation that differs from the password', () => {
+    const result = registerSchema.safeParse({ ...valid, confirmPassword: 'correcthorsE' })
+    expect(firstMessage(result, 'confirmPassword')).toBe('Passwords do not match.')
+  })
+
+  it('asks for the confirmation when it is empty', () => {
+    expect(firstMessage(registerSchema.safeParse({ ...valid, confirmPassword: '' }), 'confirmPassword')).toBe(
+      'Confirm your password.',
+    )
   })
 })
 

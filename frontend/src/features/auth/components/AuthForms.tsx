@@ -81,13 +81,13 @@ export function RegisterForm({ variant, onSent }: Props & { onSent?: () => void 
   const [sentTo, setSentTo] = useState<string | null>(null)
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: '', email: '', password: '' },
+    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
   })
 
   async function onSubmit(values: RegisterValues) {
     setFormError(null)
     try {
-      await register.mutateAsync(values)
+      await register.mutateAsync({ name: values.name, email: values.email, password: values.password })
     } catch (error) {
       if (error instanceof ApiError && error.status === 409) {
         form.setError('email', { type: 'server', message: error.message })
@@ -114,6 +114,12 @@ export function RegisterForm({ variant, onSent }: Props & { onSent?: () => void 
           label="Password"
           autoComplete="new-password"
           description="At least 8 characters."
+        />
+        <PasswordField
+          control={form.control}
+          name="confirmPassword"
+          label="Confirm password"
+          autoComplete="new-password"
         />
       </FieldGroup>
       <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>

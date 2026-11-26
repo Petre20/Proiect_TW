@@ -13,11 +13,14 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Enter your password.').max(128, 'Use at most 128 characters.'),
 })
 
-export const registerSchema = z.object({
-  name: z.string().trim().min(1, 'Enter your name.').max(100, 'Name is too long.'),
-  email,
-  password: z.string().min(8, 'Use at least 8 characters.').max(128, 'Use at most 128 characters.'),
-})
+export const registerSchema = z
+  .object({
+    name: z.string().trim().min(1, 'Enter your name.').max(100, 'Name is too long.'),
+    email,
+    password: z.string().min(8, 'Use at least 8 characters.').max(128, 'Use at most 128 characters.'),
+    confirmPassword: z.string().min(1, 'Confirm your password.'),
+  })
+  .refine((v) => v.password === v.confirmPassword, { path: ['confirmPassword'], message: 'Passwords do not match.' })
 
 export type LoginValues = z.input<typeof loginSchema>
 export type RegisterValues = z.input<typeof registerSchema>
