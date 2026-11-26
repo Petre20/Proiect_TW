@@ -58,7 +58,7 @@ def shell(title, active, body, *, tabbar=True, head="", script="", lang_desc="We
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0F3D2E"><title>{title} · WellTrack</title>
-<link rel="stylesheet" href="styles.css">{head}</head><body>
+<link rel="stylesheet" href="globals.css">{head}</head><body>
 {SPRITE}
 <div class="app">
 <aside class="rail" aria-label="Sidebar"><a class="brand" href="dashboard.html">{LOGO}WellTrack</a>{rail}
@@ -145,7 +145,7 @@ def dashboard(comeback=False):
                '<p>3 days since your last workout. Your week is still open.</p>'
                '<div class="track" style="--n:6">' + "".join('<div class="hurdle n"><i>' + str(i + 1) + '</i></div>' for i in range(6)) + '</div>'
                '<div class="pillrow" style="margin-top:1rem"><a class="btn sm" href="log.html">Log a short one</a>'
-               '<button class="btn sm line" style="--fg:var(--text)">10-min walk</button><button class="btn sm line">5-min stretch</button></div></section>')
+               '<button class="btn sm line" style="--fg:var(--foreground)">10-min walk</button><button class="btn sm line">5-min stretch</button></div></section>')
         sub = "Tuesday 2 December. No pressure."
     else:
         top = lane(5, 6, "5 of 6 workouts", "One more session finishes the week.", 83)
@@ -168,7 +168,7 @@ def dashboard(comeback=False):
    <div class="rows">
     <div style="display:grid;gap:.45rem;align-items:stretch"><div style="display:flex;justify-content:space-between;gap:.5rem"><span class="t">Run 30 km in November</span><span class="num muted small">15.1 / 30 km</span></div><div class="bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"><i style="width:50%"></i></div></div>
     <div style="display:grid;gap:.45rem;align-items:stretch"><div style="display:flex;justify-content:space-between;gap:.5rem"><span class="t">Yoga 8 times</span><span class="num muted small">5 / 8</span></div><div class="bar"><i style="width:62%"></i></div></div>
-    <div style="display:grid;gap:.45rem;align-items:stretch"><div style="display:flex;justify-content:space-between;gap:.5rem"><span class="t">Active 150 min a week</span><span class="chip" style="background:var(--sun);color:var(--sun-ink)">Reached</span></div><div class="bar volt"><i style="width:100%"></i></div></div>
+    <div style="display:grid;gap:.45rem;align-items:stretch"><div style="display:flex;justify-content:space-between;gap:.5rem"><span class="t">Active 150 min a week</span><span class="chip" style="background:var(--sun);color:var(--sun-foreground)">Reached</span></div><div class="bar volt"><i style="width:100%"></i></div></div>
    </div></section>
  </div>
 </div></main>"""
@@ -197,7 +197,7 @@ def habits():
 .habit{padding:.9rem 0}
 .hweek>div{display:grid;gap:.25rem;padding:4px 3px}
 .hweek>div.today{background:rgba(216,244,90,.45);border-radius:14px}
-.hweek .dlab{text-align:center;font-size:.75rem;font-weight:800;color:var(--muted)}
+.hweek .dlab{text-align:center;font-size:.75rem;font-weight:800;color:var(--muted-foreground)}
 .hhead{display:none}
 @media(min-width:1024px){
  .habit{grid-template-columns:260px 1fr;align-items:center;display:grid;gap:1rem}
@@ -206,7 +206,7 @@ def habits():
  .hhead{padding-left:0}
  .hhead::after{content:none}
  .hhead{grid-template-columns:260px repeat(7,1fr)}
- .hhead span{text-align:center;font-weight:800;font-size:.8125rem;color:var(--muted)}
+ .hhead span{text-align:center;font-weight:800;font-size:.8125rem;color:var(--muted-foreground)}
  .hhead span:first-child{grid-column:2}
 }
 </style>"""
@@ -237,7 +237,7 @@ def activities(empty=False):
 <div class="pagehead"><div><h1>Activities</h1><p class="num">42 sessions logged</p></div>
 <div style="display:flex;gap:.6rem" class="only-desk"><a class="btn line sm" href="import.html">Import / Export</a><a class="btn sm" href="log.html">{ico("plus")}Log activity</a></div></div>
 <div class="cols sidepanel"><section class="card" aria-label="Activity list">
-<div style="display:grid;gap:.7rem;margin-bottom:.8rem"><div style="position:relative"><input class="input" placeholder="Search notes" aria-label="Search notes" style="padding-left:2.8rem"><span style="position:absolute;left:.9rem;top:15px;color:var(--muted)">{ico("search")}</span></div>
+<div style="display:grid;gap:.7rem;margin-bottom:.8rem"><div style="position:relative"><input class="input" placeholder="Search notes" aria-label="Search notes" style="padding-left:2.8rem"><span style="position:absolute;left:.9rem;top:15px;color:var(--muted-foreground)">{ico("search")}</span></div>
 <div class="pillrow" style="flex-wrap:nowrap;overflow-x:auto;padding-bottom:.4rem;margin:0 -.2rem" role="group" aria-label="Filter by type">{chips}</div></div>
 <div class="only-mob">{rows_mob}</div><div class="only-desk">{table}</div>
 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem"><button class="btn line sm" disabled>Previous</button><span class="muted small num">Page 1 of 5</span><button class="btn line sm">Next</button></div></section>
@@ -273,7 +273,7 @@ def log_page():
 
 def goals():
     def goal(title, a, b, unit, pct, status, reached=False):
-        chip = (f'<span class="chip" style="background:var(--sun);color:var(--sun-ink)">{ico("trophy").replace("class=\"i\"", "class=\"i\" style=\"width:15px;height:15px\"")}Reached</span>' if reached
+        chip = (f'<span class="chip" style="background:var(--sun);color:var(--sun-foreground)">{ico("trophy").replace("class=\"i\"", "class=\"i\" style=\"width:15px;height:15px\"")}Reached</span>' if reached
                 else f'<span class="chip c-wlk">{status}</span>')
         return (f'<article class="card" style="display:grid;gap:.7rem"><div style="display:flex;justify-content:space-between;gap:.6rem;align-items:start"><h3>{title}</h3>{chip}</div>'
                 f'<div><span class="num" style="font:800 1.75rem var(--font-display)">{a}</span><span class="muted num"> / {b} {unit}</span></div>'
@@ -306,9 +306,9 @@ def statistics():
 <div class="pagehead"><div><h1>Statistics</h1><p>Your week against the one before.</p></div>
 <div class="seg" role="tablist" aria-label="Period" style="min-width:220px"><button role="tab" aria-selected="true">Week</button><button role="tab" aria-selected="false">Month</button></div></div>
 <div class="cols two"><div style="display:grid;gap:1rem;align-content:start">
-<section class="card" aria-labelledby="s1"><div class="hd"><h2 id="s1">Active minutes</h2><span class="small muted"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--go)"></span> this week &nbsp;<span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--line)"></span> last week</span></div>{minutes_chart()}</section>
+<section class="card" aria-labelledby="s1"><div class="hd"><h2 id="s1">Active minutes</h2><span class="small muted"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--go)"></span> this week &nbsp;<span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--border)"></span> last week</span></div>{minutes_chart()}</section>
 <section class="card" aria-labelledby="s2"><h2 id="s2" style="margin-bottom:.9rem">This week vs last</h2><div style="display:grid;gap:.9rem">{cmp("Active minutes", "214", "168", "+27%")}{cmp("Sessions", "5", "4", "+1")}{cmp("Distance", "18.4 km", "11.0 km", "+7.4 km")}</div></section>
-<section class="card" aria-labelledby="s3"><h2 id="s3" style="margin-bottom:.9rem">Goals reached, last 8 weeks</h2><div style="display:grid;grid-template-columns:repeat(8,1fr);gap:.5rem;height:110px;border-bottom:3px solid var(--ink)">{g8}</div></section>
+<section class="card" aria-labelledby="s3"><h2 id="s3" style="margin-bottom:.9rem">Goals reached, last 8 weeks</h2><div style="display:grid;grid-template-columns:repeat(8,1fr);gap:.5rem;height:110px;border-bottom:3px solid var(--brand-ink)">{g8}</div></section>
 </div><div style="display:grid;gap:1rem;align-content:start">
 <section class="card" aria-labelledby="s4"><h2 id="s4" style="margin-bottom:.9rem">Time by activity</h2><div style="display:grid;gap:1rem">{krows}</div></section>
 <section class="card" aria-labelledby="s5"><div class="hd"><h2 id="s5">November</h2><span class="small muted">Darker means more minutes</span></div>
@@ -332,7 +332,7 @@ def more():
 def login():
     hs = "".join(f'<div class="hurdle {"c" if i < 4 else "n"}"><i>{i + 1}</i></div>' for i in range(6))
     body = f"""<main class="auth" id="main">
-<section class="hero on-ink"><a class="brand" href="login.html" style="color:var(--mist)">{LOGO}WellTrack</a>
+<section class="hero on-ink"><a class="brand" href="login.html" style="color:var(--on-brand)">{LOGO}WellTrack</a>
 <h1>Clear the week.</h1><p>Log a workout in seconds, tick off today's habits, and watch your goals move.</p>
 <div class="track" style="--n:6">{hs}</div></section>
 <section class="formside"><div class="fcard"><h2>Welcome back</h2><p class="muted" style="margin-bottom:1.1rem">Log in to pick up where you left off.</p>
@@ -340,16 +340,16 @@ def login():
 <div class="field"><label for="pw">Password</label><div style="position:relative"><input class="input" id="pw" type="password" autocomplete="current-password" value="correcthorse" style="padding-right:5.2rem"><button type="button" class="btn ghost" style="position:absolute;right:.2rem;top:4px;min-height:44px;padding:0 .8rem" aria-label="Show password">{ico("eye")}</button></div></div>
 <div style="display:flex;justify-content:space-between;align-items:center;margin:-.2rem 0 1.2rem;gap:1rem"><label style="display:flex;gap:.6rem;align-items:center;font-weight:600"><input type="checkbox" checked style="width:22px;height:22px"> Keep me logged in</label><a class="link small" href="#">Forgot password?</a></div>
 <button class="btn block">Log in</button></form>
-<div style="display:flex;align-items:center;gap:.8rem;margin:1.4rem 0;color:var(--muted);font-weight:600"><hr style="flex:1;border:0;border-top:2px solid var(--line)">or<hr style="flex:1;border:0;border-top:2px solid var(--line)"></div>
+<div style="display:flex;align-items:center;gap:.8rem;margin:1.4rem 0;color:var(--muted-foreground);font-weight:600"><hr style="flex:1;border:0;border-top:2px solid var(--border)">or<hr style="flex:1;border:0;border-top:2px solid var(--border)"></div>
 <button class="btn line block" type="button"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.4-1 7.2-2.7l-3.5-2.7c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.2v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.2a6.6 6.6 0 0 1 0-4.3V7.1H2.2a11 11 0 0 0 0 9.9z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1A11 11 0 0 0 2.2 7.1l3.6 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Continue with Google</button>
-<p style="text-align:center;margin-top:1.4rem" class="muted">New to WellTrack? <a class="link" style="color:var(--text)" href="onboarding.html">Create an account</a></p></div></section></main>"""
+<p style="text-align:center;margin-top:1.4rem" class="muted">New to WellTrack? <a class="link" style="color:var(--foreground)" href="onboarding.html">Create an account</a></p></div></section></main>"""
     css = """<style>
 .auth{min-height:100dvh;display:grid;grid-template-rows:auto 1fr}
-.hero{background:var(--ink);color:var(--mist);padding:1.2rem 1.2rem 5.2rem;border-radius:0 0 34px 34px;display:grid;gap:.9rem;align-content:start}
+.hero{background:var(--brand-ink);color:var(--on-brand);padding:1.2rem 1.2rem 5.2rem;border-radius:0 0 34px 34px;display:grid;gap:.9rem;align-content:start}
 .hero h1{font-size:2.5rem;margin-top:1rem}.hero p{color:#C3D9CC;max-width:34ch}
 .hero .track{margin-top:.8rem}.hero .hurdle{height:64px}.hero .hurdle i{width:38px;height:38px;font-size:.9rem}
 .formside{padding:0 1rem 2rem;margin-top:-3.4rem}
-.fcard{background:#fff;border:2px solid var(--line);border-radius:var(--r-lg);padding:1.3rem 1.2rem;max-width:480px;margin:0 auto;box-shadow:0 18px 30px -18px rgba(15,61,46,.45)}
+.fcard{background:var(--card);border:2px solid var(--border);border-radius:var(--r-lg);padding:1.3rem 1.2rem;max-width:480px;margin:0 auto;box-shadow:0 18px 30px -18px rgba(15,61,46,.45)}
 .rail,.topbar{display:none!important}.app{display:block!important;padding:0!important}
 @media(min-width:900px){.auth{grid-template-columns:1.05fr 1fr;grid-template-rows:none}.hero{border-radius:0;padding:3rem 3.4rem;align-content:center}.hero h1{font-size:4rem}
 .hero .hurdle{height:92px}.hero .hurdle i{width:54px;height:54px}.formside{margin:0;display:grid;place-items:center;padding:2rem}.fcard{box-shadow:none;padding:2rem}}
@@ -378,10 +378,10 @@ def onboarding():
 .rail,.topbar{display:none!important}.app{display:block!important;padding:0!important}
 .ob{max-width:560px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;padding:1rem 1.2rem 1.4rem}
 .obtop{display:flex;align-items:center;gap:1rem;padding:.4rem 0 1rem}.steps{flex:1;display:flex;gap:6px}
-.steps .s{flex:1;height:10px;border-radius:9px;background:var(--line)}.steps .s.on{background:var(--ink);box-shadow:0 3px 0 #06241A}
-.step{flex:1;padding-top:1rem}.step h1{font-size:2rem;margin-bottom:.7rem}.lead{color:var(--muted);font-size:1.125rem;margin-bottom:1.4rem}
-.art{margin:1.5rem 0 2rem}.obfoot{display:flex;gap:.8rem;padding-top:1rem;position:sticky;bottom:0;background:linear-gradient(transparent,var(--mist) 28%);padding-bottom:.4rem}
-.optlist{display:grid;gap:.8rem}.opt{display:flex;align-items:center;gap:1rem;background:#fff;border:2px solid var(--line);border-radius:18px;padding:.8rem 1rem;cursor:pointer}
+.steps .s{flex:1;height:10px;border-radius:9px;background:var(--border)}.steps .s.on{background:var(--brand-ink);box-shadow:0 3px 0 var(--brand-ink-edge)}
+.step{flex:1;padding-top:1rem}.step h1{font-size:2rem;margin-bottom:.7rem}.lead{color:var(--muted-foreground);font-size:1.125rem;margin-bottom:1.4rem}
+.art{margin:1.5rem 0 2rem}.obfoot{display:flex;gap:.8rem;padding-top:1rem;position:sticky;bottom:0;background:linear-gradient(transparent,var(--background) 28%);padding-bottom:.4rem}
+.optlist{display:grid;gap:.8rem}.opt{display:flex;align-items:center;gap:1rem;background:var(--card);border:2px solid var(--border);border-radius:18px;padding:.8rem 1rem;cursor:pointer}
 .stepper{display:flex;align-items:center;justify-content:center;gap:1.4rem}.stepper .btn{width:64px;padding:0}.big{font:800 4.5rem/1 var(--font-display);min-width:2ch;text-align:center}
 .confetti{position:absolute;left:0;right:0;top:0;height:0;pointer-events:none}
 .confetti i{position:fixed;top:-12px;width:10px;height:14px;border-radius:3px;animation:fall 1.8s var(--ease) forwards}
@@ -422,11 +422,11 @@ def index():
     ph = "".join(f'<figure><iframe src="{k}.html" title="{n} on phone" loading="lazy"></iframe><figcaption>{n}</figcaption></figure>' for k, n in shots)
     desk = "".join(f'<a class="btn line sm" href="{k}.html">{n}</a>' for k, n in shots)
     return f"""<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WellTrack direction mockups</title>
-<link rel="stylesheet" href="styles.css"><style>
+<link rel="stylesheet" href="globals.css"><style>
 body{{padding:2rem 1.2rem 4rem}}.w{{max-width:1500px;margin:0 auto}}
 .phones{{display:flex;gap:28px;overflow-x:auto;padding:1.6rem 4px 2rem;scroll-snap-type:x proximity}}
 figure{{flex:none;scroll-snap-align:start;display:grid;gap:.7rem;justify-items:center}}
-iframe{{width:390px;height:800px;border:10px solid var(--ink);border-radius:46px;background:var(--mist);box-shadow:0 8px 0 #06241A,0 22px 30px -10px rgba(15,61,46,.5)}}
+iframe{{width:390px;height:800px;border:10px solid var(--brand-ink);border-radius:46px;background:var(--background);box-shadow:0 8px 0 #06241A,0 22px 30px -10px rgba(15,61,46,.5)}}
 figcaption{{font-weight:800}}.links{{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1rem}}
 </style></head><body><div class="w"><h1>WellTrack: Track and Field</h1>
 <p class="muted" style="margin:.5rem 0 0;max-width:62ch">Direction mockups, mobile first. Plain HTML and CSS, throwaway; the real app is React, Tailwind and shadcn. Swipe the phones, or open any screen full size to see the desktop layout.</p>
@@ -442,6 +442,6 @@ PAGES = {
     "profile": simple_stub("Profile", "more", "Profile and settings", "Account, password and your data."),
 }
 for name, html in PAGES.items():
-    html = html.replace('<link rel="stylesheet" href="styles.css">', '<script src="theme.js"></script><link rel="stylesheet" href="styles.css">', 1)
+    html = html.replace('<link rel="stylesheet" href="globals.css">', '<script src="theme.js"></script><link rel="stylesheet" href="globals.css">', 1)
     (OUT / f"{name}.html").write_text(html, encoding="utf-8")
 print("wrote", len(PAGES), "pages")

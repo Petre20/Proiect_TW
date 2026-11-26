@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0F3D2E"><title>Dashboard · WellTrack</title>
-<script src="theme.js"></script><link rel="stylesheet" href="styles.css"></head><body>
+<script src="theme.js"></script><link rel="stylesheet" href="globals.css"></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="home" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></symbol>
 <symbol id="habit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
@@ -33,7 +33,7 @@
 <main class="page" id="main">
 <div class="pagehead"><div><h1>Good evening, Ana</h1><p>Tuesday 2 December. No pressure.</p></div>
 <a class="btn only-desk" href="log.html"><svg class="i" aria-hidden="true"><use href="#plus"/></svg>Log activity</a></div>
-<section class="lane on-ink" aria-label="Comeback"><h2>A short one counts too</h2><p>3 days since your last workout. Your week is still open.</p><div class="track" style="--n:6"><div class="hurdle n"><i>1</i></div><div class="hurdle n"><i>2</i></div><div class="hurdle n"><i>3</i></div><div class="hurdle n"><i>4</i></div><div class="hurdle n"><i>5</i></div><div class="hurdle n"><i>6</i></div></div><div class="pillrow" style="margin-top:1rem"><a class="btn sm" href="log.html">Log a short one</a><button class="btn sm line" style="--fg:var(--text)">10-min walk</button><button class="btn sm line">5-min stretch</button></div></section>
+<section class="lane on-ink" aria-label="Comeback"><h2>A short one counts too</h2><p>3 days since your last workout. Your week is still open.</p><div class="track" style="--n:6"><div class="hurdle n"><i>1</i></div><div class="hurdle n"><i>2</i></div><div class="hurdle n"><i>3</i></div><div class="hurdle n"><i>4</i></div><div class="hurdle n"><i>5</i></div><div class="hurdle n"><i>6</i></div></div><div class="pillrow" style="margin-top:1rem"><a class="btn sm" href="log.html">Log a short one</a><button class="btn sm line" style="--fg:var(--foreground)">10-min walk</button><button class="btn sm line">5-min stretch</button></div></section>
 <div class="cols two">
  <div style="display:grid;gap:1rem;align-content:start">
   <section class="card" aria-labelledby="th"><div class="hd"><h2 id="th">Today's habits</h2><span class="muted small num" data-count="0/3">0 of 3 done</span></div>
@@ -46,7 +46,7 @@
    <div class="rows">
     <div style="display:grid;gap:.45rem;align-items:stretch"><div style="display:flex;justify-content:space-between;gap:.5rem"><span class="t">Run 30 km in November</span><span class="num muted small">15.1 / 30 km</span></div><div class="bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"><i style="width:50%"></i></div></div>
     <div style="display:grid;gap:.45rem;align-items:stretch"><div style="display:flex;justify-content:space-between;gap:.5rem"><span class="t">Yoga 8 times</span><span class="num muted small">5 / 8</span></div><div class="bar"><i style="width:62%"></i></div></div>
-    <div style="display:grid;gap:.45rem;align-items:stretch"><div style="display:flex;justify-content:space-between;gap:.5rem"><span class="t">Active 150 min a week</span><span class="chip" style="background:var(--sun);color:var(--sun-ink)">Reached</span></div><div class="bar volt"><i style="width:100%"></i></div></div>
+    <div style="display:grid;gap:.45rem;align-items:stretch"><div style="display:flex;justify-content:space-between;gap:.5rem"><span class="t">Active 150 min a week</span><span class="chip" style="background:var(--sun);color:var(--sun-foreground)">Reached</span></div><div class="bar volt"><i style="width:100%"></i></div></div>
    </div></section>
  </div>
 </div></main>

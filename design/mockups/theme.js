@@ -28,7 +28,8 @@
     [].forEach.call(d.querySelectorAll('.tt-text'), function (s) { s.textContent = dark ? 'Light mode' : 'Dark mode'; });
   }
   d.addEventListener('DOMContentLoaded', function () {
-    if (d.getElementById('themeBtn')) return;
+    var slot = d.querySelector('[data-theme-slot]');
+    if (slot) { slot.appendChild(make('in-slot')); label(); return; }
     var rail = d.querySelector('.rail'), bar = d.querySelector('.topbar'), solo = d.querySelector('main.auth,main.ob');
     if (rail && !solo) { var me = rail.querySelector('.me'); rail.insertBefore(make('in-rail', true), me); }
     if (bar && !solo) {
