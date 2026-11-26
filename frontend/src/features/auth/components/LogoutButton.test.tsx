@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse, delay } from 'msw'
 import { MemoryRouter, Route, Routes } from 'react-router'
@@ -29,12 +29,18 @@ function renderButton() {
   )
 }
 
+const FAILED = 'Could not log out. Check your connection and try again.'
+let errorToast: ReturnType<typeof vi.spyOn>
+
 beforeEach(() => {
+  errorToast = vi.spyOn(toast, 'error')
   queryClient.clear()
   queryClient.setQueryData(authKeys.me(), user)
   useAuthModal.setState({ open: false, mode: 'login', next: undefined })
   watchSession()
 })
+
+afterEach(() => errorToast.mockRestore())
 
 describe('LogoutButton', () => {
   it('logs out, clears the session and goes to the landing page', async () => {
@@ -56,23 +62,35 @@ describe('LogoutButton', () => {
     expect(calls).toBe(1)
   })
 
-  it('still logs out on this device and warns when the server fails', async () => {
+  it('stays logged in and allows a retry when the server fails', async () => {
     server.use(http.post('*/api/auth/logout', () => HttpResponse.json({ detail: 'boom' }, { status: 500 })))
     renderButton()
     await userEvent.click(screen.getByRole('button', { name: 'Log out' }))
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(FAILED))
+    expect(screen.queryByText('Landing page')).not.toBeInTheDocument()
+    expect(queryClient.getQueryData(authKeys.me())).toMatchObject({ id: 1 })
+    expect(screen.getByRole('button', { name: 'Log out' })).toBeEnabled()
+
+    server.use(http.post('*/api/auth/logout', () => new HttpResponse(null, { status: 204 })))
+    await userEvent.click(screen.getByRole('button', { name: 'Log out' }))
     expect(await screen.findByText('Landing page')).toBeInTheDocument()
     expect(queryClient.getQueryData(authKeys.me())).toBeNull()
-    expect(await screen.findByText('Could not reach the server. You were logged out on this device.')).toBeInTheDocument()
   })
 
-  it('does not open the session-expired modal when the session was already gone', async () => {
-    const warn = vi.spyOn(toast, 'error')
+  it('stays logged in when the server is unreachable', async () => {
+    server.use(http.post('*/api/auth/logout', () => HttpResponse.error()))
+    renderButton()
+    await userEvent.click(screen.getByRole('button', { name: 'Log out' }))
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(FAILED))
+    expect(queryClient.getQueryData(authKeys.me())).toMatchObject({ id: 1 })
+  })
+
+  it('treats a 401 as already logged out, without the session-expired modal', async () => {
     server.use(http.post('*/api/auth/logout', () => HttpResponse.json({ detail: 'Neautentificat.' }, { status: 401 })))
     renderButton()
     await userEvent.click(screen.getByRole('button', { name: 'Log out' }))
     expect(await screen.findByText('Landing page')).toBeInTheDocument()
     expect(useAuthModal.getState().open).toBe(false)
-    expect(warn).not.toHaveBeenCalled()
-    warn.mockRestore()
+    expect(errorToast).not.toHaveBeenCalled()
   })
 })

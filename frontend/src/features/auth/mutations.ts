@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { ApiError } from '@/lib/http'
 import { authApi } from './api'
 import { authKeys } from './queries'
 
@@ -13,8 +14,15 @@ export function useLogin() {
 export function useLogout() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: authApi.logout,
-    onSettled: () => {
+    mutationFn: async () => {
+      try {
+        await authApi.logout()
+      } catch (error) {
+        // a 401 means the server session is already gone, which is what logout wants
+        if (!(error instanceof ApiError && error.status === 401)) throw error
+      }
+    },
+    onSuccess: () => {
       queryClient.clear()
       queryClient.setQueryData(authKeys.me(), null)
     },
