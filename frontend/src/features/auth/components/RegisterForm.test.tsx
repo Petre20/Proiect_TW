@@ -124,4 +124,30 @@ describe('RegisterForm', () => {
     await submit()
     expect(await screen.findByRole('link', { name: 'Back to log in' })).toHaveAttribute('href', '/auth')
   })
+
+  describe('with Google login switched on', () => {
+    beforeEach(() => vi.stubEnv('VITE_GOOGLE_LOGIN', 'true'))
+    afterEach(() => vi.unstubAllEnvs())
+
+    it('offers Google sign-up first, above the name field', () => {
+      renderRegister()
+      const google = screen.getByRole('link', { name: 'Sign up with Google' })
+      expect(google).toHaveAttribute('href', '/api/auth/google/start')
+      expect(google.compareDocumentPosition(screen.getByLabelText('Name')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    })
+
+    it('hides it once the check-inbox step is shown', async () => {
+      server.use(http.post('*/api/auth/register', () => HttpResponse.json({ message: 'ok' }, { status: 201 })))
+      renderRegister()
+      await fill()
+      await submit()
+      await screen.findByText('Check your inbox')
+      expect(screen.queryByRole('link', { name: /Google/ })).not.toBeInTheDocument()
+    })
+  })
+
+  it('shows no Google button by default', () => {
+    renderRegister()
+    expect(screen.queryByRole('link', { name: /Google/ })).not.toBeInTheDocument()
+  })
 })
