@@ -9,7 +9,7 @@ export async function requireAuth({ request }: { request: Request }) {
   const me = await queryClient.ensureQueryData(meQuery)
   if (!me) {
     const url = new URL(request.url)
-    throw redirect(`/login?next=${encodeURIComponent(url.pathname + url.search)}`)
+    throw redirect(`/auth?next=${encodeURIComponent(url.pathname + url.search)}`)
   }
   // TODO: redirect to /onboarding when onboarding is unfinished (needs a backend flag)
   return null

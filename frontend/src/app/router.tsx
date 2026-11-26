@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter, redirect } from 'react-router'
 import { requireAdmin, requireAuth, requireGuest } from './guards'
 import { AppLayout, AuthLayout, RootLayout } from './layouts'
 
@@ -10,14 +10,15 @@ export const router = createBrowserRouter([
       { path: 'styleguide', lazy: () => import('@/features/styleguide/StyleguidePage') },
 
       {
+        path: 'auth',
         Component: AuthLayout,
-        loader: requireGuest,
         children: [
-          { path: 'login', lazy: () => import('@/features/auth/LoginPage') },
-          { path: 'register', lazy: () => import('@/features/auth/RegisterPage') },
+          { index: true, loader: requireGuest, lazy: () => import('@/features/auth/AuthPage') },
+          { path: 'verify-email', lazy: () => import('@/features/auth/VerifyEmailPage') },
         ],
       },
-      { Component: AuthLayout, children: [{ path: 'verify-email', lazy: () => import('@/features/auth/VerifyEmailPage') }] },
+      // the backend email still links to /verify-email until it is updated
+      { path: 'verify-email', loader: ({ request }) => redirect(`/auth/verify-email${new URL(request.url).search}`) },
 
       { path: 'onboarding', loader: requireAuth, lazy: () => import('@/features/onboarding/OnboardingPage') },
 
