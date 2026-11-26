@@ -1,3 +1,4 @@
+import type { Ref } from 'react'
 import { cn } from '@/lib/utils'
 
 export type DayState = 'done' | 'none' | 'today' | 'today-done'
@@ -11,9 +12,10 @@ const DOT: Record<DayState, string> = {
   'today-done': 'bg-volt shadow-[0_3px_0_var(--volt-edge)]',
 }
 
-export function WeekStrip({ days }: { days: DayState[] }) {
+export function WeekStrip({ days, ref }: { days: DayState[]; ref?: Ref<HTMLDivElement> }) {
   return (
     <div
+      ref={ref}
       role="group"
       aria-label="This week"
       className="mt-3.5 grid grid-cols-7 gap-1.5 text-center text-xs font-extrabold text-muted-foreground"
@@ -23,8 +25,20 @@ export function WeekStrip({ days }: { days: DayState[] }) {
           <span className={cn(state.startsWith('today') && 'text-foreground')}>{LETTERS[i]}</span>
           <i
             data-state={state}
-            className={cn('mx-auto mt-1 block aspect-square w-full max-w-[38px] rounded-xl not-italic', DOT[state])}
-          />
+            className={cn(
+              'relative mx-auto mt-1 block aspect-square w-full max-w-[38px] rounded-xl not-italic',
+              DOT[state],
+              state === 'today-done' && 'animate-dot-pop',
+            )}
+          >
+            {state === 'today-done' && (
+              <span
+                data-effect="ring"
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 animate-dot-ring rounded-xl bg-volt"
+              />
+            )}
+          </i>
         </div>
       ))}
     </div>

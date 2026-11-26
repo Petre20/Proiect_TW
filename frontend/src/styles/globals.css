@@ -54,6 +54,13 @@
 
 :root{ --font-ui:"Figtree",system-ui,sans-serif; --font-display:"Unbounded","Figtree",sans-serif; --ease:cubic-bezier(.22,1,.36,1); --on-brand-faint:rgba(247,245,239,.22); }
 
+@theme {
+  --animate-dot-pop: dot-pop .6s cubic-bezier(.22,1,.36,1);
+  --animate-dot-ring: dot-ring .9s ease-out 2;
+  @keyframes dot-pop { 0% { transform: scale(1) } 40% { transform: scale(1.45) } 100% { transform: scale(1) } }
+  @keyframes dot-ring { 0% { transform: scale(1); opacity: .7 } 100% { transform: scale(2.4); opacity: 0 } }
+}
+
 @custom-variant dark (&:is(.dark, .dark *));
 
 @theme inline{
