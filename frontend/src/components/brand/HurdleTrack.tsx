@@ -17,7 +17,7 @@ export function HurdleTrack({ done = 4, total = 6, className }: Props) {
         <div key={i} className="grid h-16 place-items-center lg:h-24">
           <i
             className={cn(
-              'grid size-10 place-items-center rounded-[14px] font-display text-sm font-extrabold not-italic lg:size-14 lg:text-base',
+              'grid size-10 place-items-center rounded-field font-display text-sm font-extrabold not-italic lg:size-14 lg:text-base',
               i < done
                 ? 'bg-volt text-brand-ink shadow-[0_4px_0_var(--volt-edge)]'
                 : 'border-[3px] border-dashed border-[#5E8D78] text-[#8FB5A1]',

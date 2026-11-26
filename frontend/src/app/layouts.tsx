@@ -111,7 +111,7 @@ export function AuthLayout() {
         <HurdleTrack className="mt-3" />
       </section>
       <main className="-mt-14 px-4 pb-8 lg:mt-0 lg:grid lg:place-items-center lg:p-8">
-        <div className="mx-auto w-full max-w-[480px] rounded-3xl border-2 border-border bg-card p-5 shadow-[0_18px_30px_-18px_rgb(15_61_46/0.45)] lg:p-8 lg:shadow-none">
+        <div className="mx-auto w-full max-w-form rounded-3xl border-2 border-border bg-card p-5 shadow-[0_18px_30px_-18px_rgb(15_61_46/0.45)] lg:p-8 lg:shadow-none">
           <Outlet />
         </div>
       </main>
