@@ -4,6 +4,7 @@ import { HurdleTrack } from '@/components/brand/HurdleTrack'
 import { Logo } from '@/components/brand/Logo'
 import { ThemeToggle } from '@/components/brand/ThemeToggle'
 import { AuthModal } from '@/features/auth/components/AuthModal'
+import { LogoutButton } from '@/features/auth/components/LogoutButton'
 import { cn } from '@/lib/utils'
 
 export function RootLayout() {
@@ -57,7 +58,10 @@ export function AppLayout() {
         ))}
         <div className="mt-auto flex items-center justify-between rounded-2xl bg-brand-ink-2 p-3">
           <NavLink to="/profile" className="font-bold">Profile</NavLink>
-          <ThemeToggle className="text-on-brand hover:bg-brand-ink" />
+          <div className="flex items-center gap-1">
+            <ThemeToggle className="text-on-brand hover:bg-brand-ink" />
+            <LogoutButton showLabel={false} variant="ghost" className="text-on-brand hover:bg-brand-ink" />
+          </div>
         </div>
       </aside>
 
