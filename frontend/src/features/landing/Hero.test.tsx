@@ -71,6 +71,12 @@ describe('Hero', () => {
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '0')
   })
 
+  it('shows Monday, Tuesday and Wednesday as completed in the week strip', () => {
+    renderHero()
+    const dots = Array.from(screen.getByLabelText('This week').querySelectorAll('i'))
+    expect(dots.slice(0, 4).map((d) => d.getAttribute('data-state'))).toEqual(['done', 'done', 'done', 'today'])
+  })
+
   it('lights today in the week strip only when the day is cleared', async () => {
     renderHero()
     const strip = screen.getByLabelText('This week')

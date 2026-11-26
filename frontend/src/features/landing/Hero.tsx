@@ -21,7 +21,7 @@ function TodayCard() {
   const [ticked, setTicked] = useState([true, false, false])
   const done = ticked.filter(Boolean).length
   const percent = Math.round((done / HABITS.length) * 100)
-  const week: DayState[] = ['done', 'none', 'done', done === HABITS.length ? 'today-done' : 'today', 'none', 'none', 'none']
+  const week: DayState[] = ['done', 'done', 'done', done === HABITS.length ? 'today-done' : 'today', 'none', 'none', 'none']
 
   return (
     <div className="relative text-foreground motion-safe:rotate-[1.6deg]">
