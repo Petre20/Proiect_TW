@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link, useNavigate, useSearchParams } from 'react-router'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 import { queryClient } from '@/app/query-client'
 import { FormError } from '@/components/form/FormError'
 import { PasswordField } from '@/components/form/PasswordField'
@@ -14,6 +14,7 @@ import { useAuthModal } from '@/stores/auth-modal'
 import { useLogin, useRegister } from '../mutations'
 import { safeNext } from '../redirect'
 import { loginSchema, registerSchema, type LoginValues, type RegisterValues } from '../schemas'
+import { GoogleSection } from './GoogleButton'
 import { ResendButton } from './ResendButton'
 
 type Props = { variant: 'page' | 'modal' }
@@ -25,6 +26,7 @@ export function LoginForm({ variant }: Props) {
   const { setMode, close } = useAuthModal()
   const navigate = useNavigate()
   const [params] = useSearchParams()
+  const location = useLocation()
   const login = useLogin()
   const [formError, setFormError] = useState<string | null>(null)
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null)
@@ -58,6 +60,10 @@ export function LoginForm({ variant }: Props) {
       <FormError message={formError}>
         {unverifiedEmail && <ResendButton email={unverifiedEmail} />}
       </FormError>
+      <GoogleSection
+        label="Continue with Google"
+        next={variant === 'modal' ? location.pathname + location.search : params.get('next')}
+      />
       <FieldGroup>
         <TextField control={form.control} name="email" label="Email" type="email" autoComplete="email" />
         <PasswordField control={form.control} name="password" label="Password" autoComplete="current-password" />
@@ -105,6 +111,7 @@ export function RegisterForm({ variant, onSent }: Props & { onSent?: () => void 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="grid gap-4">
       <FormError message={formError} />
+      <GoogleSection label="Sign up with Google" />
       <FieldGroup>
         <TextField control={form.control} name="name" label="Name" autoComplete="name" />
         <TextField control={form.control} name="email" label="Email" type="email" autoComplete="email" />

@@ -125,4 +125,34 @@ describe('LoginForm', () => {
     await waitFor(() => expect(useAuthModal.getState().open).toBe(false))
     expect(screen.queryByText('Dashboard page')).not.toBeInTheDocument()
   })
+
+  describe('with Google login switched on', () => {
+    beforeEach(() => vi.stubEnv('VITE_GOOGLE_LOGIN', 'true'))
+    afterEach(() => vi.unstubAllEnvs())
+
+    it('offers Google first, above the email field, and keeps the next path', () => {
+      renderLogin('/auth?next=/habits')
+      const google = screen.getByRole('link', { name: 'Continue with Google' })
+      expect(google).toHaveAttribute('href', '/api/auth/google/start?next=%2Fhabits')
+      expect(google.compareDocumentPosition(screen.getByLabelText('Email')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    })
+
+    it('drops an unsafe next path', () => {
+      renderLogin('/auth?next=//evil.com')
+      expect(screen.getByRole('link', { name: 'Continue with Google' })).toHaveAttribute('href', '/api/auth/google/start')
+    })
+
+    it('sends the user back to the page they were on from the modal', () => {
+      renderLogin('/auth', 'modal')
+      expect(screen.getByRole('link', { name: 'Continue with Google' })).toHaveAttribute(
+        'href',
+        '/api/auth/google/start?next=%2Fauth',
+      )
+    })
+  })
+
+  it('shows no Google button by default', () => {
+    renderLogin()
+    expect(screen.queryByRole('link', { name: /Google/ })).not.toBeInTheDocument()
+  })
 })

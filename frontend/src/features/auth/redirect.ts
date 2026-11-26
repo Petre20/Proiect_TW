@@ -1,4 +1,7 @@
+export function isLocalPath(path: string | null | undefined): path is string {
+  return !!path && path.startsWith('/') && !path.startsWith('//') && !path.startsWith('/\\')
+}
+
 export function safeNext(next: string | null | undefined): string {
-  if (next && next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/\\')) return next
-  return '/dashboard'
+  return isLocalPath(next) ? next : '/dashboard'
 }
