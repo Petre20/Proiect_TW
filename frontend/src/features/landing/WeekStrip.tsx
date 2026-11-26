@@ -1,4 +1,3 @@
-import type { Ref } from 'react'
 import { cn } from '@/lib/utils'
 
 export type DayState = 'done' | 'none' | 'today' | 'today-done'
@@ -12,10 +11,9 @@ const DOT: Record<DayState, string> = {
   'today-done': 'bg-volt shadow-[0_3px_0_var(--volt-edge)]',
 }
 
-export function WeekStrip({ days, ref }: { days: DayState[]; ref?: Ref<HTMLDivElement> }) {
+export function WeekStrip({ days }: { days: DayState[] }) {
   return (
     <div
-      ref={ref}
       role="group"
       aria-label="This week"
       className="mt-3.5 grid grid-cols-7 gap-1.5 text-center text-xs font-extrabold text-muted-foreground"

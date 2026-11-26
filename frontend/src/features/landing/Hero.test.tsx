@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import confetti from 'canvas-confetti'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { MemoryRouter } from 'react-router'
@@ -7,8 +6,6 @@ import { Providers } from '@/app/providers'
 import { queryClient } from '@/app/query-client'
 import { server } from '@/test/server'
 import { Hero } from './Hero'
-
-vi.mock('canvas-confetti', () => ({ default: vi.fn() }))
 
 function renderHero() {
   return render(
@@ -24,7 +21,6 @@ const tick = (name: string) => userEvent.click(screen.getByRole('button', { name
 const DONE = 'Day cleared. That is the whole trick.'
 
 beforeEach(() => {
-  vi.mocked(confetti).mockClear()
   queryClient.clear()
   server.use(http.get('*/api/auth/me', () => HttpResponse.json({ detail: 'x' }, { status: 401 })))
 })
@@ -90,26 +86,15 @@ describe('Hero', () => {
     expect(strip.querySelector('[data-state="today-done"]')).not.toBeNull()
   })
 
-  it('celebrates from today\'s dot only when the day gets cleared', async () => {
-    renderHero()
-    await tick('Read 10 pages')
-    expect(confetti).not.toHaveBeenCalled()
-    await tick('Cook a proper meal')
-    expect(confetti).toHaveBeenCalledTimes(1)
-    expect(confetti).toHaveBeenCalledWith(expect.objectContaining({ origin: expect.any(Object), disableForReducedMotion: true }))
-
-    await tick('Morning run')
-    expect(confetti).toHaveBeenCalledTimes(1)
-    await tick('Morning run')
-    expect(confetti).toHaveBeenCalledTimes(2)
-  })
-
   it('adds a ring pulse on today\'s dot once the day is cleared', async () => {
     renderHero()
     const strip = screen.getByLabelText('This week')
     expect(strip.querySelector('[data-effect="ring"]')).toBeNull()
     await tick('Read 10 pages')
+    expect(strip.querySelector('[data-effect="ring"]')).toBeNull()
     await tick('Cook a proper meal')
     expect(strip.querySelector('[data-effect="ring"]')).not.toBeNull()
+    await tick('Morning run')
+    expect(strip.querySelector('[data-effect="ring"]')).toBeNull()
   })
 })

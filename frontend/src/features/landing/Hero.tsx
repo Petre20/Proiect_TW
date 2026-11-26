@@ -1,5 +1,4 @@
-import confetti from 'canvas-confetti'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router'
 import { Tick } from '@/components/brand/Tick'
 import { Button } from '@/components/ui/button'
@@ -18,30 +17,8 @@ function message(done: number) {
   return done > 0 ? 'Nice. Keep going.' : ''
 }
 
-function celebrate(strip: HTMLElement | null) {
-  const rect = strip?.querySelector('[data-state^="today"]')?.getBoundingClientRect()
-  confetti({
-    particleCount: 70,
-    spread: 80,
-    startVelocity: 28,
-    ticks: 130,
-    colors: ['#D8F45A', '#15803D', '#FF9A4D', '#F7F5EF'],
-    origin: rect
-      ? { x: (rect.left + rect.width / 2) / window.innerWidth, y: (rect.top + rect.height / 2) / window.innerHeight }
-      : { x: 0.5, y: 0.6 },
-    disableForReducedMotion: true,
-  })
-}
-
 function TodayCard() {
   const [ticked, setTicked] = useState([true, false, false])
-  const strip = useRef<HTMLDivElement>(null)
-
-  function toggle(index: number) {
-    const next = ticked.map((v, j) => (j === index ? !v : v))
-    setTicked(next)
-    if (next.every(Boolean)) celebrate(strip.current)
-  }
 
   const done = ticked.filter(Boolean).length
   const percent = Math.round((done / HABITS.length) * 100)
@@ -66,7 +43,7 @@ function TodayCard() {
             <Tick
               aria-label={habit.name}
               aria-pressed={ticked[i]}
-              onClick={() => toggle(i)}
+              onClick={() => setTicked((t) => t.map((v, j) => (j === i ? !v : v)))}
             />
             <div>
               <div className={cn('font-extrabold', ticked[i] && 'text-muted-foreground line-through decoration-2')}>
@@ -97,7 +74,7 @@ function TodayCard() {
         <p aria-live="polite" className="mt-2 min-h-6 text-[0.9375rem] font-bold text-go-text">
           {message(done)}
         </p>
-        <WeekStrip ref={strip} days={week} />
+        <WeekStrip days={week} />
       </div>
     </div>
   )
