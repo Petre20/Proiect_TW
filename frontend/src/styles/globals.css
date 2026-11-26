@@ -81,8 +81,8 @@
   @media (width >= 64rem) { padding-inline: 2rem; }
 }
 @utility py-section {
-  padding-block: 3.5rem;
-  @media (width >= 64rem) { padding-block: 5.5rem; }
+  padding-block: 3rem;
+  @media (width >= 64rem) { padding-block: 4.5rem; }
 }
 
 @custom-variant dark (&:is(.dark, .dark *));

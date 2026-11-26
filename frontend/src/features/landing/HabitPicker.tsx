@@ -69,7 +69,7 @@ export function HabitPicker() {
 
       <div className="mt-1 flex flex-wrap items-center justify-between gap-4">
         <p role="status" className="font-bold text-muted-foreground">
-          <b className="font-display text-foreground">{count}</b> {count === 1 ? 'habit' : 'habits'} picked
+          <b className="num font-extrabold text-foreground">{count}</b> {count === 1 ? 'habit' : 'habits'} picked
         </p>
         <Button asChild>
           <Link to="/auth?mode=register">{ctaLabel(count)}</Link>

@@ -44,7 +44,7 @@ const LAYOUT_TOKENS: [string, string][] = [
   ['max-w-page', 'Page container, 72 rem.'],
   ['max-w-form', 'Auth and form card, 30 rem.'],
   ['px-gutter', 'Page side padding: 16 px, 32 px from the lg breakpoint.'],
-  ['py-section', 'Vertical space of a page section: 56 px, 88 px from the lg breakpoint.'],
+  ['py-section', 'Vertical space of a page section: 48 px, 72 px from the lg breakpoint.'],
   ['rounded-field', 'Radius of inputs and small tiles, 14 px. Cards use rounded-lg.'],
 ]
 
