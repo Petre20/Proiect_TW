@@ -1,8 +1,10 @@
 import { BarChart3, BookOpen, Goal, LayoutDashboard, ListChecks, MoreHorizontal, Plus, Activity, ArrowLeftRight, Users, FileText } from 'lucide-react'
 import { NavLink, Outlet, ScrollRestoration } from 'react-router'
+import { HurdleTrack } from '@/components/brand/HurdleTrack'
 import { Logo } from '@/components/brand/Logo'
 import { ThemeToggle } from '@/components/brand/ThemeToggle'
 import { AuthModal } from '@/features/auth/components/AuthModal'
+import { LogoutButton } from '@/features/auth/components/LogoutButton'
 import { cn } from '@/lib/utils'
 
 export function RootLayout() {
@@ -56,7 +58,10 @@ export function AppLayout() {
         ))}
         <div className="mt-auto flex items-center justify-between rounded-2xl bg-brand-ink-2 p-3">
           <NavLink to="/profile" className="font-bold">Profile</NavLink>
-          <ThemeToggle className="text-on-brand hover:bg-brand-ink" />
+          <div className="flex items-center gap-1">
+            <ThemeToggle className="text-on-brand hover:bg-brand-ink" />
+            <LogoutButton showLabel={false} variant="ghost" className="text-on-brand hover:bg-brand-ink" />
+          </div>
         </div>
       </aside>
 
@@ -96,11 +101,20 @@ export function AppLayout() {
 
 export function AuthLayout() {
   return (
-    <div className="grid min-h-dvh place-items-center p-4">
-      <div className="w-full max-w-md rounded-3xl border-2 border-border bg-card p-6">
-        <Logo className="mb-6" />
-        <Outlet />
-      </div>
+    <div className="grid min-h-dvh grid-rows-[auto_1fr] lg:grid-cols-[1.05fr_1fr] lg:grid-rows-none">
+      <section className="grid content-start gap-4 rounded-b-[34px] bg-brand-ink px-5 pt-5 pb-24 text-on-brand lg:content-center lg:gap-5 lg:rounded-none lg:px-14 lg:py-12">
+        <Logo onDark className="text-on-brand" />
+        <p className="mt-4 font-display text-4xl leading-none font-extrabold lg:text-6xl">Clear the week.</p>
+        <p className="max-w-[34ch] text-on-brand-muted">
+          Log a workout in seconds, tick off today&apos;s habits, and watch your goals move.
+        </p>
+        <HurdleTrack className="mt-3" />
+      </section>
+      <main className="-mt-14 px-4 pb-8 lg:mt-0 lg:grid lg:place-items-center lg:p-8">
+        <div className="mx-auto w-full max-w-[480px] rounded-3xl border-2 border-border bg-card p-5 shadow-[0_18px_30px_-18px_rgb(15_61_46/0.45)] lg:p-8 lg:shadow-none">
+          <Outlet />
+        </div>
+      </main>
     </div>
   )
 }

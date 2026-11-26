@@ -41,7 +41,7 @@ export const http = axios.create({
 })
 
 let onUnauthorized: (() => void) | undefined
-const SESSION_PROBES = ['/auth/me', '/auth/login']
+const SESSION_PROBES = ['/auth/me', '/auth/login', '/auth/logout']
 
 export function setUnauthorizedHandler(handler: () => void) {
   onUnauthorized = handler

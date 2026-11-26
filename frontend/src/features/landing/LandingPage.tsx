@@ -19,8 +19,8 @@ export function Component() {
       <section className="mx-auto grid max-w-5xl gap-4 px-4 py-16">
         <h1 className="text-5xl">Build habits that stick.</h1>
         <p className="max-w-prose text-lg text-muted-foreground">
-          Landing skeleton. Log in and Sign up open a modal; the full pages live at <Link className="underline" to="/login">/login</Link> and{' '}
-          <Link className="underline" to="/register">/register</Link>. See <Link className="underline" to="/styleguide">/styleguide</Link> for the design system.
+          Landing skeleton. Log in and Sign up open a modal; the full pages live at <Link className="underline" to="/auth">/auth</Link> and{' '}
+          <Link className="underline" to="/auth?mode=register">/auth?mode=register</Link>. See <Link className="underline" to="/styleguide">/styleguide</Link> for the design system.
         </p>
       </section>
     </main>
