@@ -29,6 +29,14 @@
   --warm-soft:#FFEFDC;   --warm-soft-text:#6B3A0A; --warm-soft-strong:#2B1503;  /* gentle amber panel: welcome back, comeback */
   --glow:rgba(255,154,77,.14);                       /* soft warm light in the page corner */
   --primary:var(--volt); --primary-foreground:#0F3D2E;
+  /* shadcn expects these too; they alias ours. Keep .dark on <html> so the aliases follow the dark values. */
+  --popover:var(--card); --popover-foreground:var(--card-foreground);
+  --secondary:var(--muted); --secondary-foreground:var(--foreground);
+  --accent:var(--muted); --accent-foreground:var(--foreground);
+  --destructive-foreground:#FFFFFF;
+  --sidebar:var(--brand-ink); --sidebar-foreground:var(--on-brand); --sidebar-border:rgba(255,255,255,.08); --sidebar-ring:var(--volt);
+  --sidebar-primary:var(--volt); --sidebar-primary-foreground:var(--brand-ink);
+  --sidebar-accent:var(--brand-ink-2); --sidebar-accent-foreground:var(--on-brand);
   --destructive:#C42B33; --destructive-soft:#FDE8E8; --destructive-text:#7A1A1F; --destructive-edge:#E7B9BB; --destructive-line:#F3C9CB;
 
   /* ---- shape ---- */
@@ -300,3 +308,51 @@ body{background:radial-gradient(70% 38% at 95% -8%,var(--glow) 0%,transparent 70
 [data-theme=dark] .avatar{box-shadow:0 0 0 1px var(--border)}
 [data-theme=dark] .steps .s.on{background:var(--volt);box-shadow:0 3px 0 var(--volt-edge)}
 [data-theme=dark] iframe{border-color:var(--control)}
+
+/* ================= 5. TAILWIND v4 + SHADCN MAPPING (app only; browsers ignore these at-rules, so the mockups are unaffected) =================
+   Paste this block into src/index.css below sections 2 and 3. It makes `bg-card`, `text-muted-foreground`,
+   `border-border`, `bg-volt`, `rounded-lg`, `font-display`... resolve to the tokens, in light and dark. */
+@custom-variant dark (&:is(.dark, .dark *));
+
+@theme inline{
+  /* shadcn semantic colours */
+  --color-background:var(--background);        --color-foreground:var(--foreground);
+  --color-card:var(--card);                    --color-card-foreground:var(--card-foreground);
+  --color-popover:var(--popover);              --color-popover-foreground:var(--popover-foreground);
+  --color-primary:var(--primary);              --color-primary-foreground:var(--primary-foreground);
+  --color-secondary:var(--secondary);          --color-secondary-foreground:var(--secondary-foreground);
+  --color-muted:var(--muted);                  --color-muted-foreground:var(--muted-foreground);
+  --color-accent:var(--accent);                --color-accent-foreground:var(--accent-foreground);
+  --color-destructive:var(--destructive);      --color-destructive-foreground:var(--destructive-foreground);
+  --color-border:var(--border);                --color-input:var(--input);               --color-ring:var(--ring);
+  --color-sidebar:var(--sidebar);              --color-sidebar-foreground:var(--sidebar-foreground);
+  --color-sidebar-border:var(--sidebar-border);--color-sidebar-ring:var(--sidebar-ring);
+  --color-sidebar-primary:var(--sidebar-primary);--color-sidebar-primary-foreground:var(--sidebar-primary-foreground);
+  --color-sidebar-accent:var(--sidebar-accent);--color-sidebar-accent-foreground:var(--sidebar-accent-foreground);
+
+  /* WellTrack brand and control colours */
+  --color-brand-ink:var(--brand-ink);          --color-brand-ink-2:var(--brand-ink-2);   --color-brand-ink-3:var(--brand-ink-3);
+  --color-on-brand:var(--on-brand);            --color-on-brand-muted:var(--on-brand-muted);
+  --color-volt:var(--volt);                    --color-volt-edge:var(--volt-edge);
+  --color-go:var(--go);                        --color-go-edge:var(--go-edge);           --color-go-text:var(--go-text);
+  --color-ember:var(--ember);                  --color-ember-edge:var(--ember-edge);     --color-ember-foreground:var(--ember-foreground);
+  --color-sun:var(--sun);                      --color-sun-edge:var(--sun-edge);         --color-sun-foreground:var(--sun-foreground);
+  --color-control:var(--control);              --color-control-edge:var(--control-edge); --color-field:var(--field);
+  --color-warm-soft:var(--warm-soft);          --color-warm-soft-text:var(--warm-soft-text); --color-warm-soft-strong:var(--warm-soft-strong);
+  --color-destructive-soft:var(--destructive-soft); --color-destructive-text:var(--destructive-text);
+
+  /* shape and type */
+  --radius-sm:var(--r-sm);  --radius-md:var(--r-md);  --radius-lg:var(--r-lg);  --radius-xl:calc(var(--r-lg) + 8px);
+  --font-sans:var(--font-ui);  --font-display:var(--font-display);
+}
+
+/* Keycap press effect. Set --fill / --edge / --fg on the element (a shadcn Button variant does this), e.g.
+   default: [--fill:var(--volt)] [--edge:var(--volt-edge)] [--fg:var(--brand-ink)]    outline: --control / --control-edge / --foreground */
+@utility keycap{
+  background:var(--fill); color:var(--fg);
+  box-shadow:0 5px 0 var(--edge);
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease),filter .12s;
+  &:hover{transform:translateY(-1px);box-shadow:0 6px 0 var(--edge)}
+  &:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge)}
+  &:disabled{transform:none;filter:grayscale(.4);opacity:.7}
+}
