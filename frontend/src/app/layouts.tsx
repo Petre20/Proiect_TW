@@ -46,7 +46,7 @@ export function AppLayout() {
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[248px_1fr]">
       <aside className="sticky top-0 hidden h-dvh flex-col gap-1 bg-brand-ink p-4 text-on-brand lg:flex" aria-label="Sidebar">
-        <Logo className="mb-6 px-2 text-on-brand" />
+        <Logo onDark className="mb-6 px-2 text-on-brand" />
         {NAV.map(({ to, label, icon: Icon }) => (
           <NavLink key={to} to={to} className={railLink}><Icon className="size-5" />{label}</NavLink>
         ))}

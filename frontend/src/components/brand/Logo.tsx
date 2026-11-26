@@ -1,10 +1,24 @@
-export function Logo({ className = '' }: { className?: string }) {
+import markDark from '@/assets/brand/logo-mark-dark.png'
+import mark from '@/assets/brand/logo-mark.png'
+import { cn } from '@/lib/utils'
+
+type Props = { className?: string; size?: number; onDark?: boolean }
+
+export function LogoMark({ className, size = 28, onDark = false }: Props) {
+  const height = { height: size }
+  if (onDark) return <img src={markDark} alt="" style={height} className={cn('w-auto', className)} />
   return (
-    <span className={`inline-flex items-center gap-2 font-display text-lg font-extrabold tracking-tight ${className}`}>
-      <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true">
-        <rect width="32" height="32" rx="10" fill="var(--volt)" />
-        <path d="M9 24V11M23 24V11M7 12.5h18M7 18.5h18" stroke="var(--brand-ink)" strokeWidth="3" strokeLinecap="round" />
-      </svg>
+    <>
+      <img src={mark} alt="" style={height} className={cn('w-auto dark:hidden', className)} />
+      <img src={markDark} alt="" style={height} className={cn('hidden w-auto dark:block', className)} />
+    </>
+  )
+}
+
+export function Logo({ className, size, onDark }: Props) {
+  return (
+    <span className={cn('inline-flex items-center gap-2.5 font-display text-lg font-extrabold tracking-tight', className)}>
+      <LogoMark size={size} onDark={onDark} />
       WellTrack
     </span>
   )
