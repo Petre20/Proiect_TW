@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate, useSearchParams } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import { queryClient } from '@/app/query-client'
 import { FormError } from '@/components/form/FormError'
 import { PasswordField } from '@/components/form/PasswordField'
@@ -11,9 +11,9 @@ import { FieldGroup } from '@/components/ui/field'
 import { ApiError } from '@/lib/http'
 import { applyServerErrors } from '@/lib/forms'
 import { useAuthModal } from '@/stores/auth-modal'
-import { useLogin } from '../mutations'
+import { useLogin, useRegister } from '../mutations'
 import { safeNext } from '../redirect'
-import { loginSchema, type LoginValues } from '../schemas'
+import { loginSchema, registerSchema, type LoginValues, type RegisterValues } from '../schemas'
 import { ResendButton } from './ResendButton'
 
 type Props = { variant: 'page' | 'modal' }
@@ -74,14 +74,77 @@ export function LoginForm({ variant }: Props) {
   )
 }
 
-export function RegisterForm({ variant }: Props) {
+export function RegisterForm({ variant, onSent }: Props & { onSent?: () => void }) {
+  const { setMode } = useAuthModal()
+  const register = useRegister()
+  const [formError, setFormError] = useState<string | null>(null)
+  const [sentTo, setSentTo] = useState<string | null>(null)
+  const form = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: '', email: '', password: '' },
+  })
+
+  async function onSubmit(values: RegisterValues) {
+    setFormError(null)
+    try {
+      await register.mutateAsync(values)
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 409) {
+        form.setError('email', { type: 'server', message: error.message })
+      } else {
+        setFormError(applyServerErrors(form, error))
+      }
+      return
+    }
+    setSentTo(values.email)
+    onSent?.()
+  }
+
+  if (sentTo) return <CheckInbox email={sentTo} variant={variant} />
+
+  return (
+    <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="grid gap-4">
+      <FormError message={formError} />
+      <FieldGroup>
+        <TextField control={form.control} name="name" label="Name" autoComplete="name" />
+        <TextField control={form.control} name="email" label="Email" type="email" autoComplete="email" />
+        <PasswordField
+          control={form.control}
+          name="password"
+          label="Password"
+          autoComplete="new-password"
+          description="At least 8 characters."
+        />
+      </FieldGroup>
+      <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+        {form.formState.isSubmitting ? 'Creating account…' : 'Create account'}
+      </Button>
+      {variant === 'modal' && (
+        <Button type="button" variant="ghost" size="sm" onClick={() => setMode('login')}>
+          Already have an account? Log in
+        </Button>
+      )}
+    </form>
+  )
+}
+
+function CheckInbox({ email, variant }: { email: string; variant: Props['variant'] }) {
   const { setMode } = useAuthModal()
   return (
-    <div className="grid gap-3 text-sm text-muted-foreground">
-      <p>Register form goes here (F1). After submit it shows "Check your inbox". Rendered as: {variant}.</p>
-      {variant === 'modal' && (
-        <Button variant="ghost" size="sm" onClick={() => setMode('login')}>
-          Already have an account? Log in
+    <div className="grid gap-4">
+      <h2 className="text-2xl">Check your inbox</h2>
+      <p className="text-muted-foreground">
+        We sent a link to <strong className="text-foreground">{email}</strong>. Open it to activate your account. It
+        expires in 60 minutes.
+      </p>
+      <ResendButton email={email} startCooldown />
+      {variant === 'modal' ? (
+        <Button type="button" variant="ghost" size="sm" onClick={() => setMode('login')}>
+          Back to log in
+        </Button>
+      ) : (
+        <Button asChild variant="ghost" size="sm">
+          <Link to="/auth">Back to log in</Link>
         </Button>
       )}
     </div>

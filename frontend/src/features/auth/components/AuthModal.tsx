@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useAuthModal } from '@/stores/auth-modal'
 import { LoginForm, RegisterForm } from './AuthForms'
@@ -11,14 +12,21 @@ const COPY = {
 export function AuthModal() {
   const { open, mode, close } = useAuthModal()
   const copy = COPY[mode]
+  const [sent, setSent] = useState(false)
+  const [seen, setSeen] = useState({ mode, open })
+  if (seen.mode !== mode || seen.open !== open) {
+    setSeen({ mode, open })
+    setSent(false)
+  }
+  const checkInbox = sent && mode === 'register'
   return (
     <Dialog open={open} onOpenChange={(o) => !o && close()}>
       <DialogContent className="max-w-md rounded-3xl p-6">
-        <DialogHeader>
-          <DialogTitle>{copy.title}</DialogTitle>
-          <DialogDescription>{copy.body}</DialogDescription>
+        <DialogHeader className={checkInbox ? 'sr-only' : undefined}>
+          <DialogTitle>{checkInbox ? 'Check your inbox' : copy.title}</DialogTitle>
+          <DialogDescription>{checkInbox ? 'Confirm your email to finish signing up.' : copy.body}</DialogDescription>
         </DialogHeader>
-        {mode === 'register' ? <RegisterForm variant="modal" /> : <LoginForm variant="modal" />}
+        {mode === 'register' ? <RegisterForm variant="modal" onSent={() => setSent(true)} /> : <LoginForm variant="modal" />}
       </DialogContent>
     </Dialog>
   )
