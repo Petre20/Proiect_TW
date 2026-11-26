@@ -130,5 +130,6 @@
   ::selection{background:var(--volt);color:var(--brand-ink)}
   :focus-visible{outline:3px solid var(--ring);outline-offset:3px;border-radius:8px}
 }
+.on-ink :focus-visible{outline-color:var(--volt)}
 .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

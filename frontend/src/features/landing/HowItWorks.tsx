@@ -9,7 +9,7 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="mx-auto max-w-page px-gutter py-section">
+    <section id="how-it-works" className="mx-auto max-w-page scroll-mt-4 px-gutter py-section">
       <h2 className="max-w-[24ch] text-title text-foreground">How it works: one daily loop, everything else follows.</h2>
       <ol className="mt-6 grid gap-4 lg:grid-cols-3">
         {STEPS.map(({ title, body }, i) => (

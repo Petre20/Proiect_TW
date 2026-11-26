@@ -82,7 +82,7 @@ function TodayCard() {
 
 export function Hero() {
   return (
-    <header className="relative overflow-hidden rounded-b-[38px] bg-brand-ink pb-14 text-on-brand lg:rounded-b-[54px] lg:pb-[4.6rem] dark:border-b dark:border-white/10">
+    <header className="on-ink relative overflow-hidden rounded-b-[38px] bg-brand-ink pb-14 text-on-brand lg:rounded-b-[54px] lg:pb-[4.6rem] dark:border-b dark:border-white/10">
       <LandingHeader />
       <div className="mx-auto mt-6 grid max-w-page gap-10 px-gutter lg:mt-10 lg:grid-cols-[1.12fr_1fr] lg:items-center lg:gap-14">
         <div>
