@@ -145,7 +145,7 @@ def dashboard(comeback=False):
                '<p>3 days since your last workout. Your week is still open.</p>'
                '<div class="track" style="--n:6">' + "".join('<div class="hurdle n"><i>' + str(i + 1) + '</i></div>' for i in range(6)) + '</div>'
                '<div class="pillrow" style="margin-top:1rem"><a class="btn sm" href="log.html">Log a short one</a>'
-               '<button class="btn sm line" style="--fg:var(--ink)">10-min walk</button><button class="btn sm line">5-min stretch</button></div></section>')
+               '<button class="btn sm line" style="--fg:var(--text)">10-min walk</button><button class="btn sm line">5-min stretch</button></div></section>')
         sub = "Tuesday 2 December. No pressure."
     else:
         top = lane(5, 6, "5 of 6 workouts", "One more session finishes the week.", 83)
@@ -342,7 +342,7 @@ def login():
 <button class="btn block">Log in</button></form>
 <div style="display:flex;align-items:center;gap:.8rem;margin:1.4rem 0;color:var(--muted);font-weight:600"><hr style="flex:1;border:0;border-top:2px solid var(--line)">or<hr style="flex:1;border:0;border-top:2px solid var(--line)"></div>
 <button class="btn line block" type="button"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.4-1 7.2-2.7l-3.5-2.7c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.2v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.2a6.6 6.6 0 0 1 0-4.3V7.1H2.2a11 11 0 0 0 0 9.9z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1A11 11 0 0 0 2.2 7.1l3.6 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Continue with Google</button>
-<p style="text-align:center;margin-top:1.4rem" class="muted">New to WellTrack? <a class="link" style="color:var(--ink)" href="onboarding.html">Create an account</a></p></div></section></main>"""
+<p style="text-align:center;margin-top:1.4rem" class="muted">New to WellTrack? <a class="link" style="color:var(--text)" href="onboarding.html">Create an account</a></p></div></section></main>"""
     css = """<style>
 .auth{min-height:100dvh;display:grid;grid-template-rows:auto 1fr}
 .hero{background:var(--ink);color:var(--mist);padding:1.2rem 1.2rem 5.2rem;border-radius:0 0 34px 34px;display:grid;gap:.9rem;align-content:start}
@@ -417,7 +417,7 @@ def simple_stub(title, active, h, p):
 
 
 def index():
-    shots = [("dashboard", "Dashboard"), ("habits", "Habits"), ("log", "Log activity"), ("goals", "Goals"), ("statistics", "Statistics"), ("activities", "Activities"),
+    shots = [("landing", "Landing"), ("dashboard", "Dashboard"), ("habits", "Habits"), ("log", "Log activity"), ("goals", "Goals"), ("statistics", "Statistics"), ("activities", "Activities"),
              ("dashboard-comeback", "Comeback state"), ("activities-empty", "Empty state"), ("more", "More"), ("login", "Log in"), ("onboarding", "Onboarding")]
     ph = "".join(f'<figure><iframe src="{k}.html" title="{n} on phone" loading="lazy"></iframe><figcaption>{n}</figcaption></figure>' for k, n in shots)
     desk = "".join(f'<a class="btn line sm" href="{k}.html">{n}</a>' for k, n in shots)
@@ -442,5 +442,6 @@ PAGES = {
     "profile": simple_stub("Profile", "more", "Profile and settings", "Account, password and your data."),
 }
 for name, html in PAGES.items():
+    html = html.replace('<link rel="stylesheet" href="styles.css">', '<script src="theme.js"></script><link rel="stylesheet" href="styles.css">', 1)
     (OUT / f"{name}.html").write_text(html, encoding="utf-8")
 print("wrote", len(PAGES), "pages")
