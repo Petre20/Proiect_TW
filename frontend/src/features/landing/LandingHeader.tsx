@@ -12,13 +12,13 @@ export function LandingHeader() {
 
   return (
     <nav aria-label="Site" className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 lg:px-8">
-      <Link to="/" aria-label="WellTrack home">
+      <Link to="/" aria-label="WellTrack home" className="shrink-0">
         <Logo onDark className="text-on-brand" />
       </Link>
-      <div className="flex items-center gap-2">
-        <ThemeToggle className="text-on-brand hover:bg-brand-ink-2" />
+      <div className="flex items-center gap-1 sm:gap-2">
+        <ThemeToggle className="text-on-brand hover:bg-brand-ink-2 max-[420px]:hidden" />
         {!isPending && me && (
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="px-3 sm:px-4">
             <Link to="/dashboard">Open dashboard</Link>
           </Button>
         )}
@@ -27,12 +27,12 @@ export function LandingHeader() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-on-brand ring-2 ring-inset ring-on-brand/30 hover:bg-brand-ink-2"
+              className="px-3 text-on-brand ring-2 ring-inset ring-on-brand/30 hover:bg-brand-ink-2 sm:px-4"
               onClick={() => show('login')}
             >
               Log in
             </Button>
-            <Button size="sm" onClick={() => show('register')}>Sign up</Button>
+            <Button size="sm" className="px-3 sm:px-4" onClick={() => show('register')}>Sign up</Button>
           </>
         )}
       </div>

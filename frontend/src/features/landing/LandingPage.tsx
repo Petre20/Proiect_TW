@@ -1,12 +1,9 @@
-import { LandingHeader } from './LandingHeader'
+import { Hero } from './Hero'
 
 export function Component() {
   return (
-    <>
-      <div className="bg-brand-ink text-on-brand">
-        <LandingHeader />
-      </div>
-      <main id="main" />
-    </>
+    <main id="main">
+      <Hero />
+    </main>
   )
 }
