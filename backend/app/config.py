@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     database_password: SecretStr = Field(min_length=1)
 
     app_env: Literal["development", "test", "production"] = "development"
-    frontend_url: str = "http://127.0.0.1:5173"
+    frontend_url: str = "http://localhost:5173"
     cors_origins: list[str] = [
         "http://127.0.0.1:5173", "http://localhost:5173",
         "http://127.0.0.1:8000", "http://localhost:8000",
@@ -40,6 +40,12 @@ class Settings(BaseSettings):
     local_email_directory: Path = BACKEND_DIR / ".local" / "emails"
     resend_api_key: SecretStr = SecretStr("")
     email_from: str = ""
+
+    google_enabled: bool = False
+    google_client_id: str = ""
+    google_client_secret: SecretStr = SecretStr("")
+    google_redirect_uri: str = "http://localhost:5173/api/auth/google/callback"
+    oauth_session_secret: SecretStr = SecretStr("")
 
     @model_validator(mode="after")
     def validate_auth_configuration(self) -> "Settings":
@@ -58,6 +64,24 @@ class Settings(BaseSettings):
             not self.resend_api_key.get_secret_value() or not self.email_from
         ):
             raise ValueError("Pentru Resend sunt necesare RESEND_API_KEY si EMAIL_FROM.")
+        if self.google_enabled:
+            redirect = urlsplit(self.google_redirect_uri)
+            frontend_origin = f"{frontend.scheme}://{frontend.netloc}"
+            if (
+                not self.google_client_id or not self.google_client_secret.get_secret_value()
+                or len(self.oauth_session_secret.get_secret_value()) < 32
+            ):
+                raise ValueError("Google necesita GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET si OAUTH_SESSION_SECRET de minimum 32 de caractere.")
+            if (
+                redirect.scheme not in {"http", "https"} or not redirect.netloc
+                or redirect.path != "/api/auth/google/callback"
+                or redirect.query or redirect.fragment or redirect.username or redirect.password
+            ):
+                raise ValueError("GOOGLE_REDIRECT_URI trebuie sa indice ruta /api/auth/google/callback.")
+            if redirect.hostname != frontend.hostname or frontend_origin not in self.cors_origins:
+                raise ValueError("Google necesita acelasi hostname pentru callback si frontend si o origine frontend permisa in CORS.")
+            if self.app_env == "production" and redirect.scheme != "https":
+                raise ValueError("Callback-ul Google necesita HTTPS in productie.")
         if self.app_env == "production" and (
             not self.session_cookie_secure or frontend.scheme != "https"
             or self.email_delivery != "resend"

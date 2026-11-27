@@ -24,7 +24,8 @@ class User(Base):
     id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
     email: Mapped[str] = mapped_column(String(255))
-    password_hash: Mapped[str] = mapped_column(Text)
+    password_hash: Mapped[str | None] = mapped_column(Text)
+    google_sub: Mapped[str | None] = mapped_column(String(255), unique=True)
     role: Mapped[str] = mapped_column(String(20), server_default=text("'user'"))
     is_active: Mapped[bool] = mapped_column(Boolean, server_default=text("true"))
     email_verified: Mapped[bool] = mapped_column(Boolean, server_default=text("false"))
@@ -45,6 +46,8 @@ class User(Base):
         CheckConstraint("btrim(name) <> ''", name="name_not_blank"),
         CheckConstraint("btrim(email) <> ''", name="email_not_blank"),
         CheckConstraint("btrim(password_hash) <> ''", name="password_hash_not_blank"),
+        CheckConstraint("password_hash IS NOT NULL OR google_sub IS NOT NULL", name="authentication_method"),
+        CheckConstraint("google_sub IS NULL OR btrim(google_sub) <> ''", name="google_sub_not_blank"),
         CheckConstraint(
             "(email_verification_token_hash IS NULL) = "
             "(email_verification_expires_at IS NULL)",

@@ -24,6 +24,7 @@ def test_local_email_preserves_token_without_making_network_request(tmp_path, mo
     assert files[0].stat().st_mode & 0o777 == 0o600
     message = json.loads(files[0].read_text())
     assert message["to"] == ["test@example.com"]
+    assert urlsplit(message["verification_url"]).path == "/auth/verify-email"
     assert parse_qs(urlsplit(message["verification_url"]).query)["token"] == ["test-token"]
 
 
@@ -42,3 +43,25 @@ def test_resend_request_is_mocked_and_errors_are_sanitized(tmp_path, monkeypatch
     with pytest.raises(EmailDeliveryError) as exception:
         send_verification_email("test@example.com", "test-token", settings)
     assert "private-provider-details" not in str(exception.value)
+
+
+def test_resend_success_uses_frontend_verification_page(tmp_path, monkeypatch):
+    from pydantic import SecretStr
+
+    settings = local_settings(tmp_path).model_copy(update={
+        "email_delivery": "resend", "email_from": "WellTrack <onboarding@resend.dev>",
+        "resend_api_key": SecretStr("test-only-api-key"),
+    })
+    calls = []
+
+    def accepted_request(url, **kwargs):
+        calls.append(kwargs["json"])
+        assert kwargs["headers"]["Authorization"] == "Bearer test-only-api-key"
+        return httpx.Response(200, request=httpx.Request("POST", url), json={"id": "test-email-id"})
+
+    monkeypatch.setattr(httpx, "post", accepted_request)
+    send_verification_email("test@example.com", "test-token", settings)
+    assert len(calls) == 1
+    assert calls[0]["from"] == settings.email_from
+    assert "/auth/verify-email?token=test-token" in calls[0]["text"]
+    assert not settings.local_email_directory.exists()

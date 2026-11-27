@@ -14,7 +14,7 @@ class EmailDeliveryError(Exception):
 
 def send_verification_email(email: str, token: str, settings: Settings) -> None:
     verification_url = (
-        settings.frontend_url.rstrip("/") + "/verify-email?" + urlencode({"token": token})
+        settings.frontend_url.rstrip("/") + "/auth/verify-email?" + urlencode({"token": token})
     )
     message = {
         "to": [email],
