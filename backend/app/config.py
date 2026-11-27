@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import EmailStr, Field, SecretStr, TypeAdapter, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import URL
 
@@ -36,10 +36,12 @@ class Settings(BaseSettings):
     verification_ttl_minutes: int = Field(default=60, ge=1, le=1440)
     verification_resend_seconds: int = Field(default=60, ge=1)
     auth_requests_per_minute: int = Field(default=10, ge=1)
-    email_delivery: Literal["local", "resend"] = "local"
+    email_delivery: Literal["local", "resend", "brevo"] = "local"
     local_email_directory: Path = BACKEND_DIR / ".local" / "emails"
     resend_api_key: SecretStr = SecretStr("")
+    brevo_api_key: SecretStr = SecretStr("")
     email_from: str = ""
+    email_from_name: str = Field(default="WellTrack", min_length=1)
 
     google_enabled: bool = False
     google_client_id: str = ""
@@ -64,6 +66,10 @@ class Settings(BaseSettings):
             not self.resend_api_key.get_secret_value() or not self.email_from
         ):
             raise ValueError("Pentru Resend sunt necesare RESEND_API_KEY si EMAIL_FROM.")
+        if self.email_delivery == "brevo":
+            if not self.brevo_api_key.get_secret_value().strip() or not self.email_from:
+                raise ValueError("Pentru Brevo sunt necesare BREVO_API_KEY si EMAIL_FROM.")
+            self.email_from = str(TypeAdapter(EmailStr).validate_python(self.email_from))
         if self.google_enabled:
             redirect = urlsplit(self.google_redirect_uri)
             frontend_origin = f"{frontend.scheme}://{frontend.netloc}"
@@ -84,10 +90,10 @@ class Settings(BaseSettings):
                 raise ValueError("Callback-ul Google necesita HTTPS in productie.")
         if self.app_env == "production" and (
             not self.session_cookie_secure or frontend.scheme != "https"
-            or self.email_delivery != "resend"
+            or self.email_delivery not in {"resend", "brevo"}
             or any(not origin.startswith("https://") for origin in self.cors_origins)
         ):
-            raise ValueError("Productia necesita HTTPS, cookie Secure si trimiterea emailurilor prin Resend.")
+            raise ValueError("Productia necesita HTTPS, cookie Secure si trimiterea emailurilor prin Resend sau Brevo.")
         return self
 
     @property

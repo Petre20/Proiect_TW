@@ -34,12 +34,25 @@ def send_verification_email(email: str, token: str, settings: Settings) -> None:
             with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
                 json.dump({**message, "verification_url": verification_url}, stream, indent=2)
             return
-        response = httpx.post(
-            "https://api.resend.com/emails",
-            headers={"Authorization": f"Bearer {settings.resend_api_key.get_secret_value()}"},
-            json={**message, "from": settings.email_from},
-            timeout=10,
-        )
+        if settings.email_delivery == "brevo":
+            response = httpx.post(
+                "https://api.brevo.com/v3/smtp/email",
+                headers={"api-key": settings.brevo_api_key.get_secret_value()},
+                json={
+                    "sender": {"name": settings.email_from_name, "email": settings.email_from},
+                    "to": [{"email": email}],
+                    "subject": message["subject"],
+                    "textContent": message["text"],
+                },
+                timeout=10,
+            )
+        else:
+            response = httpx.post(
+                "https://api.resend.com/emails",
+                headers={"Authorization": f"Bearer {settings.resend_api_key.get_secret_value()}"},
+                json={**message, "from": settings.email_from},
+                timeout=10,
+            )
         response.raise_for_status()
     except (OSError, httpx.HTTPError):
         raise EmailDeliveryError("Emailul nu a putut fi trimis.") from None
