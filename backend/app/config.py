@@ -5,7 +5,8 @@ from urllib.parse import urlsplit
 
 from pydantic import EmailStr, Field, SecretStr, TypeAdapter, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import URL
+from sqlalchemy import URL, make_url
+from sqlalchemy.exc import ArgumentError
 
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
@@ -16,13 +17,16 @@ class Settings(BaseSettings):
         env_file=BACKEND_DIR / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        hide_input_in_errors=True,
     )
 
     database_host: str = "127.0.0.1"
     database_port: int = Field(default=5432, ge=1, le=65535)
     database_name: str = "welltrack"
     database_user: str = "welltrack_app"
-    database_password: SecretStr = Field(min_length=1)
+    database_password: SecretStr = SecretStr("")
+    database_connection_url: SecretStr = Field(default=SecretStr(""), validation_alias="DATABASE_URL")
+    database_connect_timeout: int = Field(default=10, ge=1, le=120)
 
     app_env: Literal["development", "test", "production"] = "development"
     frontend_url: str = "http://localhost:5173"
@@ -48,6 +52,12 @@ class Settings(BaseSettings):
     google_client_secret: SecretStr = SecretStr("")
     google_redirect_uri: str = "http://localhost:5173/api/auth/google/callback"
     oauth_session_secret: SecretStr = SecretStr("")
+
+    @model_validator(mode="after")
+    def validate_database_configuration(self) -> "Settings":
+        # Validarea timpurie evita conectarea accidentala la baza locala.
+        self.database_url
+        return self
 
     @model_validator(mode="after")
     def validate_auth_configuration(self) -> "Settings":
@@ -98,6 +108,24 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> URL:
+        connection_url = self.database_connection_url.get_secret_value().strip()
+        if connection_url:
+            try:
+                url = make_url(connection_url)
+            except (ArgumentError, ValueError):
+                raise ValueError("DATABASE_URL nu este un URL PostgreSQL valid.") from None
+            if (
+                url.drivername not in {"postgres", "postgresql", "postgresql+psycopg"}
+                or not url.host or not url.database or not url.username
+            ):
+                raise ValueError("DATABASE_URL necesita PostgreSQL, host, utilizator si numele bazei.")
+            if url.host.endswith(".neon.tech") and url.query.get("sslmode") not in {
+                "require", "verify-ca", "verify-full",
+            }:
+                raise ValueError("Conexiunea Neon necesita sslmode=require sau verificare TLS mai stricta.")
+            return url.set(drivername="postgresql+psycopg")
+        if not self.database_password.get_secret_value().strip():
+            raise ValueError("Completeaza DATABASE_URL sau DATABASE_PASSWORD pentru conexiunea locala.")
         return URL.create(
             "postgresql+psycopg",
             username=self.database_user,
