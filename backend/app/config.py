@@ -1,3 +1,4 @@
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -52,6 +53,12 @@ class Settings(BaseSettings):
     google_client_secret: SecretStr = SecretStr("")
     google_redirect_uri: str = "http://localhost:5173/api/auth/google/callback"
     oauth_session_secret: SecretStr = SecretStr("")
+
+    r2_enabled: bool = False
+    r2_endpoint_url: str = ""
+    r2_access_key_id: SecretStr = SecretStr("")
+    r2_secret_access_key: SecretStr = SecretStr("")
+    r2_bucket_name: str = ""
 
     @model_validator(mode="after")
     def validate_database_configuration(self) -> "Settings":
@@ -134,6 +141,44 @@ class Settings(BaseSettings):
             port=self.database_port,
             database=self.database_name,
         )
+
+    @model_validator(mode="after")
+    def validate_r2_configuration(self) -> "Settings":
+        if not self.r2_enabled:
+            return self
+
+        if not all ([
+            self.r2_endpoint_url.strip(),
+            self.r2_access_key_id.get_secret_value().strip(),
+            self.r2_secret_access_key.get_secret_value().strip(),
+            self.r2_bucket_name.strip(),
+        ]):
+            raise ValueError("Pentru R2 sunt necesare endpoint-ul, credentialele si bucket-ul.")
+
+        endpoint = urlsplit(self.r2_endpoint_url)
+
+        if(
+            endpoint.scheme != "https"
+            or not endpoint.hostname
+            or not endpoint.hostname.endswith(".r2.cloudflarestorage.com")
+            or endpoint.port not in {None, 443}
+            or endpoint.username is not None
+            or endpoint.password is not None
+            or endpoint.path not in {"", "/"}
+            or endpoint.query
+            or endpoint.fragment
+        ):
+            raise ValueError("R2_ENDPOINT_URL trebuie sa fie un endpoint HTTPS Cloudflare R2.")
+
+        if not re.fullmatch(
+            r"[a-z0-9][a-z0-9-]{1,61}[a-z0-9]",
+            self.r2_bucket_name,
+        ):
+            raise ValueError(
+                "R2_BUCKET_NAME trebuie sa aiba 3-63 de caractere: "
+                "litere mici, cifre sau cratime, fara cratima la capete."
+            )
+        return self
 
 
 @lru_cache
